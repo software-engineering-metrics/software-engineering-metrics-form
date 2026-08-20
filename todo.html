@@ -1,292 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Software Engineering Metrics Capture Form</title>
-<style>
-  :root {
-    --ink: #16202c;
-    --muted: #5a6a7a;
-    --rule: #d6dde5;
-    --bg: #ffffff;
-    --panel: #f6f8fa;
-    --accent: #1f5fa9;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    padding: 0 1rem 4rem;
-    background: var(--bg);
-    color: var(--ink);
-    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  }
-  header, main, footer { max-width: 46rem; margin: 0 auto; }
-  header { padding: 2rem 0 1rem; border-bottom: 2px solid var(--ink); }
-  h1 { margin: 0 0 .25rem; font-size: 1.75rem; }
-  .lede { margin: .5rem 0; color: var(--muted); }
-  nav { margin: 1.5rem 0; padding: 1rem; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; }
-  nav h2 { margin: 0 0 .5rem; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); }
-  nav ol { margin: 0; padding-left: 1.25rem; }
-  nav li { margin: .15rem 0; }
-  nav a { color: var(--accent); }
-  fieldset {
-    margin: 2rem 0 0;
-    padding: 1rem 1.25rem 1.25rem;
-    border: 1px solid var(--rule);
-    border-radius: 6px;
-  }
-  fieldset fieldset { margin-top: 1.25rem; background: var(--panel); }
-  legend { padding: 0 .4rem; font-weight: 700; font-size: 1.05rem; }
-  fieldset fieldset legend { font-size: .95rem; font-weight: 600; }
-  .note {
-    margin: .25rem 0 1rem;
-    padding: .6rem .8rem;
-    border-left: 3px solid var(--accent);
-    background: var(--panel);
-    color: var(--muted);
-    font-size: .875rem;
-  }
-  .grid { display: block; }
-  .field { display: flex; flex-direction: column; gap: .25rem; margin: 0 0 1rem; }
-  .field.wide { display: flex; }
-  label { font-weight: 600; font-size: .9rem; }
-  .hint { color: var(--muted); font-size: .8rem; font-weight: 400; }
-  input[type="text"], input[type="email"], input[type="url"], input[type="date"],
-  input[type="number"], input[type="time"], select, textarea {
-    width: 100%;
-    padding: .45rem .55rem;
-    border: 1px solid var(--rule);
-    border-radius: 4px;
-    background: #fff;
-    color: inherit;
-    font: inherit;
-    font-size: .95rem;
-  }
-  textarea { min-height: 4.5rem; resize: vertical; }
-  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
-  .choices { display: flex; flex-direction: column; gap: .4rem; margin: .35rem 0 .5rem; }
-  .choices label { font-weight: 400; display: inline-flex; align-items: center; gap: .35rem; }
-  .required { color: #a3231f; }
-  table { width: 100%; border-collapse: collapse; margin: .5rem 0 1rem; font-size: .9rem; }
-  th, td { border: 1px solid var(--rule); padding: .4rem .5rem; text-align: left; vertical-align: middle; }
-  th { background: var(--panel); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
-  td select, td input { margin: 0; }
-  .actions { margin: 2rem 0 0; padding: 1.25rem; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; }
-  button { padding: .6rem 1.25rem; font: inherit; font-weight: 600; border-radius: 4px; cursor: pointer; }
-  button[type="submit"] { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
-  button[type="reset"] { background: #fff; color: var(--ink); border: 1px solid var(--rule); }
-  footer { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: .85rem; }
-  a { color: var(--accent); }
-  @media (prefers-color-scheme: dark) {
-    :root { --ink: #e8edf2; --muted: #9fb0c0; --rule: #33404e; --bg: #131a21; --panel: #1b242d; --accent: #7fb2ee; }
-    input[type="text"], input[type="email"], input[type="url"], input[type="date"],
-    input[type="number"], input[type="time"], select, textarea { background: #0f1519; }
-    button[type="reset"] { background: #0f1519; }
-    button[type="submit"] { color: #0b1117; }
-  }
-</style>
-</head>
-<body>
 
-<header>
-  <h1>Software engineering metrics capture form</h1>
-  <p class="lede">
-    One reporting period, for one product, one team, or one topic. Complete
-    only the sections that apply. Every figure should come from a named
-    source system, and every speed or output figure should be reported
-    alongside its quality guardrail.
-  </p>
-</header>
-
-<main>
-
-<nav aria-label="Form sections">
-  <h2>Sections</h2>
-  <ol>
-    <li><a href="#scope">Scope and identification</a></li>
-    <li><a href="#governance">Governance and guardrails</a></li>
-    <li><a href="#flow">Flow metrics</a></li>
-    <li><a href="#review">Pull request and code review</a></li>
-    <li><a href="#dora">DORA delivery metrics</a></li>
-    <li><a href="#devex">Developer experience: SPACE and DevEx</a></li>
-    <li><a href="#quality">Code and quality</a></li>
-    <li><a href="#product">Product and business outcomes</a></li>
-    <li><a href="#reliability">Reliability, operations, security</a></li>
-    <li><a href="#ai">AI-assisted development</a></li>
-    <li><a href="#maturity">Maturity self-assessment</a></li>
-    <li><a href="#closing">Caveats, exclusions, sign-off</a></li>
-  </ol>
-</nav>
-
-<form action="/metrics/submissions" method="post" accept-charset="utf-8">
-
-<!-- ============================================================ -->
-<fieldset id="scope">
-  <legend>1. Scope and identification</legend>
-  <p class="note">
-    A metric set is only comparable when its subject, period, and sources are
-    stated explicitly. Two teams computing the same formula from different
-    source systems will not produce comparable numbers.
-  </p>
-
-  <div class="field wide">
-    <span id="subject-type-label" style="font-weight:600;font-size:.9rem">
-      What is this submission about? <span class="required" aria-hidden="true">*</span>
-    </span>
-    <div class="choices" role="group" aria-labelledby="subject-type-label">
-      <label><input type="radio" name="subject_type" value="product" required> A product</label>
-      <label><input type="radio" name="subject_type" value="team"> A team</label>
-      <label><input type="radio" name="subject_type" value="topic"> A topic or initiative</label>
-      <label><input type="radio" name="subject_type" value="value_stream"> A value stream</label>
-    </div>
-  </div>
-
-  <div class="grid">
-    <div class="field">
-      <label for="subject_name">Subject name <span class="required" aria-hidden="true">*</span></label>
-      <input type="text" id="subject_name" name="subject_name" required
-             placeholder="e.g. Payments API, Platform Team, Test flakiness">
-    </div>
-    <div class="field">
-      <label for="subject_id">Subject identifier</label>
-      <span class="hint" id="subject-id-hint">Stable key used in your systems.</span>
-      <input type="text" id="subject_id" name="subject_id"
-             aria-describedby="subject-id-hint" placeholder="e.g. svc-payments-api">
-    </div>
-    <div class="field">
-      <label for="org_unit">Organization unit</label>
-      <input type="text" id="org_unit" name="org_unit" placeholder="e.g. Core Platform">
-    </div>
-    <div class="field wide">
-      <label for="subject_description">Short description</label>
-      <textarea id="subject_description" name="subject_description"
-                placeholder="What this product, team, or topic covers, in one or two sentences."></textarea>
-    </div>
-
-    <div class="field">
-      <label for="reporter_name">Submitted by <span class="required" aria-hidden="true">*</span></label>
-      <input type="text" id="reporter_name" name="reporter_name" required autocomplete="name">
-    </div>
-    <div class="field">
-      <label for="reporter_email">Email <span class="required" aria-hidden="true">*</span></label>
-      <input type="email" id="reporter_email" name="reporter_email" required autocomplete="email">
-    </div>
-    <div class="field">
-      <label for="reporter_role">Role</label>
-      <input type="text" id="reporter_role" name="reporter_role"
-             placeholder="e.g. Engineering manager, SRE, Data owner">
-    </div>
-    <div class="field">
-      <label for="metric_owner">Named metric owner</label>
-      <span class="hint">The person accountable for these definitions.</span>
-      <input type="text" id="metric_owner" name="metric_owner">
-    </div>
-
-    <div class="field">
-      <label for="period_start">Reporting period start <span class="required" aria-hidden="true">*</span></label>
-      <input type="date" id="period_start" name="period_start" required>
-    </div>
-    <div class="field">
-      <label for="period_end">Reporting period end <span class="required" aria-hidden="true">*</span></label>
-      <input type="date" id="period_end" name="period_end" required>
-    </div>
-    <div class="field">
-      <label for="cadence">Reporting cadence</label>
-      <select id="cadence" name="cadence">
-        <option value="">Select a cadence</option>
-        <option value="weekly">Weekly</option>
-        <option value="fortnightly">Fortnightly</option>
-        <option value="monthly">Monthly</option>
-        <option value="quarterly">Quarterly</option>
-        <option value="annually">Annually</option>
-        <option value="ad-hoc">Ad hoc, one-off</option>
-      </select>
-    </div>
-    <div class="field">
-      <label for="team_size">Contributing engineers (headcount)</label>
-      <input type="number" id="team_size" name="team_size" min="0" step="1" inputmode="numeric">
-    </div>
-  </div>
-
-  <fieldset>
-    <legend>Data sources and instrumentation</legend>
-    <div class="field wide">
-      <span id="sources-label" style="font-weight:600;font-size:.9rem">Source systems used (select all that apply)</span>
-      <div class="choices" role="group" aria-labelledby="sources-label">
-        <label><input type="checkbox" name="data_sources" value="issue_tracker"> Issue tracker</label>
-        <label><input type="checkbox" name="data_sources" value="version_control"> Version control</label>
-        <label><input type="checkbox" name="data_sources" value="ci_cd"> CI/CD pipeline</label>
-        <label><input type="checkbox" name="data_sources" value="incident_management"> Incident management</label>
-        <label><input type="checkbox" name="data_sources" value="observability"> Observability / APM</label>
-        <label><input type="checkbox" name="data_sources" value="survey"> Survey platform</label>
-        <label><input type="checkbox" name="data_sources" value="security_scanner"> Security scanner</label>
-        <label><input type="checkbox" name="data_sources" value="product_analytics"> Product analytics</label>
-        <label><input type="checkbox" name="data_sources" value="finance"> Finance / cost system</label>
-        <label><input type="checkbox" name="data_sources" value="calendar"> Calendar data</label>
-        <label><input type="checkbox" name="data_sources" value="manual"> Manual estimate or spreadsheet</label>
-      </div>
-    </div>
-    <div class="grid">
-      <div class="field">
-        <label for="tooling">Primary tooling</label>
-        <input type="text" id="tooling" name="tooling" list="tooling-options"
-               placeholder="e.g. GitHub, Jira, Datadog">
-        <datalist id="tooling-options">
-          <option value="GitHub"></option>
-          <option value="GitLab"></option>
-          <option value="Bitbucket"></option>
-          <option value="Jira"></option>
-          <option value="Linear"></option>
-          <option value="Azure DevOps"></option>
-          <option value="Jenkins"></option>
-          <option value="CircleCI"></option>
-          <option value="Datadog"></option>
-          <option value="Grafana"></option>
-          <option value="PagerDuty"></option>
-          <option value="Opsgenie"></option>
-          <option value="Sentry"></option>
-          <option value="SonarQube"></option>
-          <option value="Snyk"></option>
-          <option value="Amplitude"></option>
-        </datalist>
-      </div>
-      <div class="field">
-        <label for="collection_method">Collection method</label>
-        <select id="collection_method" name="collection_method">
-          <option value="">Select a method</option>
-          <option value="automated">Fully automated instrumentation</option>
-          <option value="semi_automated">Semi-automated, some manual steps</option>
-          <option value="manual">Manual collection</option>
-          <option value="estimate">Expert estimate, not measured</option>
-        </select>
-      </div>
-      <div class="field">
-        <label for="data_confidence">Confidence in this data</label>
-        <select id="data_confidence" name="data_confidence">
-          <option value="">Select a confidence level</option>
-          <option value="high">High: verified against source systems</option>
-          <option value="medium">Medium: spot-checked</option>
-          <option value="low">Low: known gaps or unverified</option>
-        </select>
-      </div>
-      <div class="field wide">
-        <label for="source_notes">Source-of-truth notes</label>
-        <textarea id="source_notes" name="source_notes"
-                  placeholder="Which system is authoritative for each figure, and any known collection gaps."></textarea>
-      </div>
-    </div>
-  </fieldset>
-</fieldset>
-
-<!-- ============================================================ -->
-<fieldset id="governance">
-  <legend>2. Governance and guardrails</legend>
-  <p class="note">
-    A measure that becomes a target stops being a good measure. Every
-    incentivized metric needs a paired guardrail and a named gaming vector
-    before it reaches a dashboard.
-  </p>
+<h2>Governance and guardrails</h2>
 
   <div class="field wide">
     <span id="charter-label" style="font-weight:600;font-size:.9rem">Is there a written metrics charter for this subject?</span>
@@ -296,8 +9,7 @@
       <label><input type="radio" name="charter_exists" value="no"> No</label>
     </div>
   </div>
-
-  <div class="grid">
+  
     <div class="field">
       <label for="charter_url">Charter location</label>
       <input type="url" id="charter_url" name="charter_url" placeholder="https://">
@@ -374,20 +86,13 @@
       <label><input type="checkbox" name="governance_checklist" value="retired"> At least one metric retired in the last cycle if it stopped informing decisions</label>
     </div>
   </div>
-</fieldset>
 
-<!-- ============================================================ -->
-<fieldset id="flow">
-  <legend>3. Flow metrics</legend>
-  <p class="note">
-    Flow load = arrival rate x flow time (Little's law). Report velocity and
-    distribution together; velocity alone says nothing about what kind of
-    work is getting done.
-  </p>
 
-  <fieldset>
+<h2>Flow Metrics</h2>
+
+  
     <legend>Flow velocity and distribution</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="flow_velocity">Flow velocity: items completed</label>
         <input type="number" id="flow_velocity" name="flow_velocity" min="0" step="1">
@@ -414,7 +119,7 @@
       Flow distribution: the share of completed items by type. The four
       percentages should total 100.
     </p>
-    <div class="grid">
+    
       <div class="field">
         <label for="dist_features">Features (%)</label>
         <input type="number" id="dist_features" name="dist_features" min="0" max="100" step="0.1">
@@ -432,11 +137,11 @@
         <input type="number" id="dist_debt" name="dist_debt" min="0" max="100" step="0.1">
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Flow time, flow load, and efficiency</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="flow_time_median">Flow time, median (days)</label>
         <span class="hint">Entry to the value stream through to delivery.</span>
@@ -477,11 +182,11 @@
         <input type="number" id="aging_items" name="aging_items" min="0" step="1">
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Cycle time decomposition (hours per stage)</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="stage_coding">Coding time</label>
         <input type="number" id="stage_coding" name="stage_coding" min="0" step="0.1">
@@ -507,11 +212,11 @@
         <input type="number" id="cycle_time_total" name="cycle_time_total" min="0" step="0.1">
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Lean value stream metrics</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="pca">Percent complete and accurate, %C/A (%)</label>
         <span class="hint">Units usable downstream without rework.</span>
@@ -537,17 +242,11 @@
                placeholder="Which stage holds the largest queue, and what evidence points to it.">
       </div>
     </div>
-  </fieldset>
-</fieldset>
+  
 
-<!-- ============================================================ -->
-<fieldset id="review">
-  <legend>4. Pull request and code review metrics</legend>
-  <p class="note">
-    Review speed metrics need a quality guardrail. Faster reviews that catch
-    less are not an improvement.
-  </p>
-  <div class="grid">
+
+<h2>Code review metrics</h2>
+
     <div class="field">
       <label for="prs_opened">Pull requests opened (count in period)</label>
       <input type="number" id="prs_opened" name="prs_opened" min="0" step="1">
@@ -600,17 +299,10 @@
       <input type="number" id="defects_caught_in_review" name="defects_caught_in_review" min="0" step="1">
     </div>
   </div>
-</fieldset>
 
-<!-- ============================================================ -->
-<fieldset id="dora">
-  <legend>5. DORA delivery metrics</legend>
-  <p class="note">
-    The four DORA metrics are a system-level set. Report throughput
-    (deployment frequency, lead time) alongside stability (change failure
-    rate, recovery time), never one pair alone.
-  </p>
-  <div class="grid">
+
+<h2>DORA delivery metrics</h2>
+  
     <div class="field">
       <label for="deploy_count">Successful production deployments (count in period)</label>
       <input type="number" id="deploy_count" name="deploy_count" min="0" step="1">
@@ -675,20 +367,12 @@
              placeholder="e.g. any merge to main reaching production, excluding config-only changes">
     </div>
   </div>
-</fieldset>
 
-<!-- ============================================================ -->
-<fieldset id="devex">
-  <legend>6. Developer experience: SPACE and DevEx</legend>
-  <p class="note">
-    Use at least one metric from at least three SPACE dimensions, mixing
-    subjective and objective signals. Activity metrics are the dimension most
-    prone to misuse: never report them standalone, and never per individual.
-  </p>
+<h2>Developer experience</h2>
 
-  <fieldset>
+  
     <legend>Satisfaction and well-being</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="satisfaction_score">Developer satisfaction, mean (1&ndash;5)</label>
         <input type="number" id="satisfaction_score" name="satisfaction_score" min="1" max="5" step="0.1">
@@ -714,11 +398,11 @@
         <input type="number" id="docs_satisfaction" name="docs_satisfaction" min="1" max="5" step="0.1">
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Efficiency and flow: focus time and interruptions</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="focus_blocks">Uninterrupted blocks of two hours or more (per engineer per week)</label>
         <input type="number" id="focus_blocks" name="focus_blocks" min="0" step="0.1">
@@ -744,16 +428,16 @@
         <input type="number" id="unplanned_work" name="unplanned_work" min="0" max="100" step="0.1">
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Objective DevEx instrumentation</legend>
     <p class="hint">
       Pair every subjective response with the objective signal it refers to.
       Divergence between perception and measurement is itself worth
       investigating.
     </p>
-    <div class="grid">
+    
       <div class="field">
         <label for="build_time">Local build time, median (minutes)</label>
         <input type="number" id="build_time" name="build_time" min="0" step="0.1">
@@ -781,7 +465,7 @@
     </div>
 
     <p class="hint">DevEx dimensions, self-assessed on a five-point scale.</p>
-    <div class="grid">
+    
       <div class="field">
         <label for="devex_feedback">Feedback loops (1&ndash;5)</label>
         <select id="devex_feedback" name="devex_feedback">
@@ -816,11 +500,11 @@
         </select>
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Communication and collaboration</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="bus_factor">Bus factor</label>
         <span class="hint">People who would have to leave before a critical area is orphaned.</span>
@@ -839,11 +523,11 @@
         <input type="number" id="onboarding_time" name="onboarding_time" min="0" step="0.5">
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Survey mechanics</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="survey_date">Most recent survey closed on</label>
         <input type="date" id="survey_date" name="survey_date">
@@ -898,15 +582,15 @@
       <textarea id="survey_action" name="survey_action"
                 placeholder="Name one concrete change made and communicated back to respondents."></textarea>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Activity metrics, for aggregate context only</legend>
     <p class="hint">
       Report these only in aggregate and only alongside outcome metrics.
       Never attribute them to an individual.
     </p>
-    <div class="grid">
+    
       <div class="field">
         <label for="commits_per_week">Commits per week (team total)</label>
         <input type="number" id="commits_per_week" name="commits_per_week" min="0" step="1">
@@ -916,14 +600,12 @@
         <input type="number" id="active_contributors" name="active_contributors" min="0" step="1">
       </div>
     </div>
-  </fieldset>
-</fieldset>
+  
 
-<!-- ============================================================ -->
-<fieldset id="quality">
-  <legend>7. Code and quality metrics</legend>
-  <div class="grid">
-    <div class="field">
+
+<h2>Code quality metrics</h2>
+
+<div class="field">
       <label for="cyclomatic_mean">Cyclomatic complexity, mean per function</label>
       <input type="number" id="cyclomatic_mean" name="cyclomatic_mean" min="0" step="0.1">
     </div>
@@ -1008,19 +690,11 @@
       <input type="number" id="docs_staleness" name="docs_staleness" min="0" step="1">
     </div>
   </div>
-</fieldset>
 
-<!-- ============================================================ -->
-<fieldset id="product">
-  <legend>8. Product and business outcomes</legend>
-  <p class="note">
-    Outcome metrics are the point. Shipping is not the outcome; what the
-    shipping changed for a user or for the business is.
-  </p>
-
-  <fieldset>
+<h2>Product and business outcomes</h2>
+  
     <legend>Escaped defects and quality escapes</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="escaped_critical">Escaped defects, critical</label>
         <input type="number" id="escaped_critical" name="escaped_critical" min="0" step="1">
@@ -1064,11 +738,10 @@
         </select>
       </div>
     </div>
-  </fieldset>
 
-  <fieldset>
+  
     <legend>Feature adoption</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="feature_name">Feature assessed</label>
         <input type="text" id="feature_name" name="feature_name">
@@ -1096,11 +769,11 @@
         <input type="number" id="features_unused" name="features_unused" min="0" step="1">
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Customer and business outcomes</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="csat">Customer satisfaction, CSAT (1&ndash;5)</label>
         <input type="number" id="csat" name="csat" min="1" max="5" step="0.1">
@@ -1126,11 +799,11 @@
         <input type="number" id="revenue_impact" name="revenue_impact" step="0.01">
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Cost, unit economics, and return on investment</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="currency">Currency</label>
         <select id="currency" name="currency">
@@ -1199,16 +872,12 @@
                   placeholder="What else could explain the benefit, and why it was ruled out or accounted for."></textarea>
       </div>
     </div>
-  </fieldset>
-</fieldset>
+  
 
-<!-- ============================================================ -->
-<fieldset id="reliability">
-  <legend>9. Reliability, operations, and security</legend>
-
-  <fieldset>
+<h2>Reliability, operations, and security</h2>
+  
     <legend>Service level objectives and error budget</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="sli_name">Primary service level indicator</label>
         <input type="text" id="sli_name" name="sli_name"
@@ -1261,11 +930,11 @@
         <input type="number" id="error_rate" name="error_rate" min="0" max="100" step="0.001">
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Incidents: detection, response, recovery</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="incidents_sev1">Incidents, severity 1</label>
         <input type="number" id="incidents_sev1" name="incidents_sev1" min="0" step="1">
@@ -1329,11 +998,11 @@
         <label><input type="checkbox" name="postmortem_practices" value="shared_openly"> Shared without fear of individual consequence</label>
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>On-call, capacity, and operational load</legend>
-    <div class="grid">
+    
       <div class="field">
         <label for="pages_total">Pages in the period (total)</label>
         <input type="number" id="pages_total" name="pages_total" min="0" step="1">
@@ -1361,15 +1030,15 @@
         <input type="number" id="oncall_rotation_size" name="oncall_rotation_size" min="0" step="1">
       </div>
     </div>
-  </fieldset>
+  
 
-  <fieldset>
+  
     <legend>Security and vulnerability management</legend>
     <p class="hint">
       Time-to-remediate by severity matters more than a raw open-vulnerability
       count. Track remediation against explicit targets per severity.
     </p>
-    <div class="grid">
+    
       <div class="field">
         <label for="vuln_open_critical">Open vulnerabilities, critical</label>
         <input type="number" id="vuln_open_critical" name="vuln_open_critical" min="0" step="1">
@@ -1428,19 +1097,11 @@
         <label><input type="checkbox" name="security_practices" value="targets_by_severity"> Explicit remediation-time targets set per severity</label>
       </div>
     </div>
-  </fieldset>
-</fieldset>
+  
 
-<!-- ============================================================ -->
-<fieldset id="ai">
-  <legend>10. AI-assisted development</legend>
-  <p class="note">
-    Measure AI assistance by outcome, not by output volume or vendor-reported
-    usage. Account for the full cycle, including review and correction time,
-    and segment by task type: a single blended number hides where value
-    actually concentrates.
-  </p>
-  <div class="grid">
+<h2>AI-assisted development</h2>
+
+  
     <div class="field wide">
       <span id="ai-tools-label" style="font-weight:600;font-size:.9rem">AI assistance in use</span>
       <div class="choices" role="group" aria-labelledby="ai-tools-label">
@@ -1535,33 +1196,26 @@
       <label><input type="checkbox" name="ai_audit" value="charter_updated"> Metrics charter explicitly revisited for the AI era</label>
     </div>
   </div>
-</fieldset>
 
-<!-- ============================================================ -->
-<fieldset id="maturity">
-  <legend>11. Maturity self-assessment</legend>
-  <p class="note">
-    Score against concrete evidence, not intention. Programme maturity is the
-    minimum across dimensions, not the average. Levels: 1 Initiate,
-    2 Develop, 3 Standardize, 4 Manage, 5 Orchestrate.
-  </p>
 
-  <table>
+<h2>Maturity self-assessment</h2>
+
+  
     <caption class="hint" style="text-align:left;padding-bottom:.4rem">
       Score each capability from 1 to 5, or leave blank if not assessed.
     </caption>
     <thead>
-      <tr>
+      
         <th scope="col">Part</th>
         <th scope="col">Capability</th>
         <th scope="col" style="width:12rem">Score</th>
-      </tr>
+      
     </thead>
     <tbody>
-      <tr>
+      
         <th scope="row">1</th>
-        <td><label for="maturity_p1">Foundations: governance, instrumentation, statistical literacy</label></td>
-        <td>
+        <label for="maturity_p1">Foundations: governance, instrumentation, statistical literacy</label>
+        
           <select id="maturity_p1" name="maturity_p1">
             <option value="">Not assessed</option>
             <option value="1">1 &ndash; Initiate</option>
@@ -1570,12 +1224,12 @@
             <option value="4">4 &ndash; Manage</option>
             <option value="5">5 &ndash; Orchestrate</option>
           </select>
-        </td>
-      </tr>
-      <tr>
+        
+      
+      
         <th scope="row">2</th>
-        <td><label for="maturity_p2">Flow metrics: value stream, flow time, DORA adoption</label></td>
-        <td>
+        <label for="maturity_p2">Flow metrics: value stream, flow time, DORA adoption</label>
+        
           <select id="maturity_p2" name="maturity_p2">
             <option value="">Not assessed</option>
             <option value="1">1 &ndash; Initiate</option>
@@ -1584,12 +1238,12 @@
             <option value="4">4 &ndash; Manage</option>
             <option value="5">5 &ndash; Orchestrate</option>
           </select>
-        </td>
-      </tr>
-      <tr>
+        
+      
+      
         <th scope="row">3</th>
-        <td><label for="maturity_p3">Developer experience: SPACE balance, survey rigor, focus time</label></td>
-        <td>
+        <label for="maturity_p3">Developer experience: SPACE balance, survey rigor, focus time</label>
+        
           <select id="maturity_p3" name="maturity_p3">
             <option value="">Not assessed</option>
             <option value="1">1 &ndash; Initiate</option>
@@ -1598,12 +1252,12 @@
             <option value="4">4 &ndash; Manage</option>
             <option value="5">5 &ndash; Orchestrate</option>
           </select>
-        </td>
-      </tr>
-      <tr>
+        
+      
+      
         <th scope="row">4</th>
-        <td><label for="maturity_p4">Code and quality: complexity, test effectiveness, debt measurement</label></td>
-        <td>
+        <label for="maturity_p4">Code and quality: complexity, test effectiveness, debt measurement</label>
+        
           <select id="maturity_p4" name="maturity_p4">
             <option value="">Not assessed</option>
             <option value="1">1 &ndash; Initiate</option>
@@ -1612,12 +1266,12 @@
             <option value="4">4 &ndash; Manage</option>
             <option value="5">5 &ndash; Orchestrate</option>
           </select>
-        </td>
-      </tr>
-      <tr>
+        
+      
+      
         <th scope="row">5</th>
-        <td><label for="maturity_p5">Product and business: escaped defects, adoption, unit economics</label></td>
-        <td>
+        <label for="maturity_p5">Product and business: escaped defects, adoption, unit economics</label>
+        
           <select id="maturity_p5" name="maturity_p5">
             <option value="">Not assessed</option>
             <option value="1">1 &ndash; Initiate</option>
@@ -1626,12 +1280,12 @@
             <option value="4">4 &ndash; Manage</option>
             <option value="5">5 &ndash; Orchestrate</option>
           </select>
-        </td>
-      </tr>
-      <tr>
+        
+      
+      
         <th scope="row">6</th>
-        <td><label for="maturity_p6">Reliability and security: SLOs, incident metrics, remediation discipline</label></td>
-        <td>
+        <label for="maturity_p6">Reliability and security: SLOs, incident metrics, remediation discipline</label>
+        
           <select id="maturity_p6" name="maturity_p6">
             <option value="">Not assessed</option>
             <option value="1">1 &ndash; Initiate</option>
@@ -1640,12 +1294,12 @@
             <option value="4">4 &ndash; Manage</option>
             <option value="5">5 &ndash; Orchestrate</option>
           </select>
-        </td>
-      </tr>
-      <tr>
+        
+      
+      
         <th scope="row">7</th>
-        <td><label for="maturity_p7">AI era: evidence-based assessment of AI-assisted development</label></td>
-        <td>
+        <label for="maturity_p7">AI era: evidence-based assessment of AI-assisted development</label>
+        
           <select id="maturity_p7" name="maturity_p7">
             <option value="">Not assessed</option>
             <option value="1">1 &ndash; Initiate</option>
@@ -1654,12 +1308,12 @@
             <option value="4">4 &ndash; Manage</option>
             <option value="5">5 &ndash; Orchestrate</option>
           </select>
-        </td>
-      </tr>
-      <tr>
+        
+      
+      
         <th scope="row">8</th>
-        <td><label for="maturity_p8">Programme: dashboards, rollout, adoption roadmap</label></td>
-        <td>
+        <label for="maturity_p8">Programme: dashboards, rollout, adoption roadmap</label>
+        
           <select id="maturity_p8" name="maturity_p8">
             <option value="">Not assessed</option>
             <option value="1">1 &ndash; Initiate</option>
@@ -1668,12 +1322,12 @@
             <option value="4">4 &ndash; Manage</option>
             <option value="5">5 &ndash; Orchestrate</option>
           </select>
-        </td>
-      </tr>
+        
+      
     </tbody>
-  </table>
+  
 
-  <div class="grid">
+  
     <div class="field">
       <label for="maturity_overall">Overall programme maturity</label>
       <span class="hint">The minimum across dimensions, not the average.</span>
@@ -1697,12 +1351,12 @@
                 placeholder="Feed low scores into the adoption roadmap as investment priorities, not as a verdict."></textarea>
     </div>
   </div>
-</fieldset>
+
 
 <!-- ============================================================ -->
 <fieldset id="closing">
   <legend>12. Caveats, exclusions, and sign-off</legend>
-  <div class="grid">
+  
     <div class="field wide">
       <label for="notable_changes">Movement outside normal variation</label>
       <textarea id="notable_changes" name="notable_changes"
@@ -1743,7 +1397,7 @@
     </div>
   </div>
 
-  <div class="grid">
+  
     <div class="field">
       <label for="submission_date">Submission date</label>
       <input type="date" id="submission_date" name="submission_date">
@@ -1757,7 +1411,7 @@
       </select>
     </div>
   </div>
-</fieldset>
+
 
 <div class="actions">
   <button type="submit" name="action" value="submit">Submit metrics</button>
@@ -1776,6 +1430,3 @@
     checklists, and the maturity self-assessment appendices.
   </p>
 </footer>
-
-</body>
-</html>

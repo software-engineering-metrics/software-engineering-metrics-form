@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Software Engineering Metrics Form</title>
+<style>
+  :root {
+    --ink: #16202c;
+    --muted: #5a6a7a;
+    --rule: #d6dde5;
+    --bg: #ffffff;
+    --panel: #f6f8fa;
+    --accent: #1f5fa9;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    padding: 0 1rem 4rem;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.5 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  header, main, footer { max-width: 46rem; margin: 0 auto; }
+  header { padding: 2rem 0 1rem; }
+  h1 { margin: 0 0 .25rem; font-size: 1.75rem; }
+  .note {
+    margin: .25rem 0 1rem;
+    padding: .6rem .8rem;
+    border-left: 3px solid var(--accent);
+    background: var(--panel);
+    color: var(--muted);
+    font-size: .875rem;
+  }
+  label { font-weight: 600; font-size: .9rem; }
+  .hint { color: var(--muted); font-size: .8rem; font-weight: 400; }
+  textarea { min-height: 4.5rem; resize: vertical; }
+  input:focus, select:focus, textarea:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .choices { display: flex; flex-direction: column; gap: .4rem; margin: .35rem 0 .5rem; }
+  .choices label { font-weight: 400; display: inline-flex; align-items: center; gap: .35rem; }
+  .required { color: #a3231f; }
+  table { width: 100%; border-collapse: collapse; margin: .5rem 0 1rem; font-size: .9rem; }
+  th, td { border: 1px solid var(--rule); padding: .4rem .5rem; text-align: left; vertical-align: middle; }
+  th { background: var(--panel); font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; }
+  td select, td input { margin: 0; }
+  .actions { margin: 2rem 0 0; padding: 1.25rem; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; }
+  button { padding: .6rem 1.25rem; font: inherit; font-weight: 600; border-radius: 4px; cursor: pointer; }
+  button[type="submit"] { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
+  button[type="reset"] { background: #fff; color: var(--ink); border: 1px solid var(--rule); }
+  footer { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: .85rem; }
+  a { color: var(--accent); }
+  @media (prefers-color-scheme: dark) {
+    :root { --ink: #e8edf2; --muted: #9fb0c0; --rule: #33404e; --bg: #131a21; --panel: #1b242d; --accent: #7fb2ee; }
+    input[type="text"], input[type="email"], input[type="url"], input[type="date"],
+    input[type="number"], input[type="time"], select, textarea { background: #0f1519; }
+    button[type="reset"] { background: #0f1519; }
+    button[type="submit"] { color: #0b1117; }
+  }
+</style>
+</head>
+
+<body>
+
+<main>
+
+<h1>Software engineering metrics form</h1>
+
+<p>Complete as much as you reasonably can, using whatever reasonable estimates or metrics you have.</p>
+
+<form action="/metrics/submissions" method="post" accept-charset="utf-8">
+
+<p>
+  <label for="email">Your email address?</label>
+  <br>
+  <input
+    type="email"
+    id="email"
+    name="email"
+    required
+    placeholder="ann.adams@example.com"
+    style="width: 100%;"
+  />
+</p>
+
+<p>
+  <label for="which">Which organization / office / outfit / etc.?</label>
+  <br>
+  <input
+    type="text"
+    id="which_team"
+    name="which_team"
+    required
+    placeholder="ACME Incorporated" 
+    style="width: 100%;" 
+  />
+</p>
+
+<p>
+  <label for="which">Which department / division / directorate / etc.?</label>
+  <br>
+  <input
+    type="text"
+    id="which_team"
+    name="which_team"
+    required
+    placeholder="Production Department" 
+    style="width: 100%;" 
+  />
+</p>
+
+<p>
+  <label for="which">Which plan / project / product / practice / etc.?</label>
+  <br>
+  <input
+    type="text"
+    id="which_plan"
+    name="which_plan"
+    required
+    placeholder="Phoenix Project" 
+    style="width: 100%;" 
+  />
+</p>
+
+<p>
+  <label for="which">Which task / todo / topic / etc.?</label>
+  <br>
+  <input
+    type="text"
+    id="which_task"
+    name="which_task"
+    required
+    placeholder="Implement Feature X" 
+    style="width: 100%;" 
+  />
+</p>
+
+<p>
+  <label for="stage">Which phase / stage / queue / etc.?</label>
+  <br>
+  <input
+    type="text"
+    id="which_task"
+    name="which_task"
+    required
+    placeholder="User Acceptance Testing" 
+    style="width: 100%;" 
+  />
+</p>
+
+<p>
+  <label for="stage">What status / step / change / etc.?</label>
+  <br>
+  <input
+    type="text"
+    id="which_task"
+    name="which_task"
+    required
+    placeholder="Start" 
+    style="width: 100%;" 
+  />
+</p>
+
+<p>
+  <label for="when">When is this occuring?</label>
+  <br>
+  <input
+    type="datetime-local"
+    id="when"
+    name="when"
+    required
+  />
+<p>
+
+<p>
+  <label for="collection_method">Collection method?</label>
+  <br>
+  <select id="collection_method" name="collection_method">
+    <option value="">Select a method</option>
+    <option value="estimate">Estimate</option>
+    <option value="manual">Manual collection</option>
+    <option value="assisted">Assisted collection (some manual, some automated)</option>
+    <option value="automated">Automated collection</option>
+  </select>
+</p>
+
+<p>
+  <label for="confidence">Confidence in this information?</label>
+  <br>
+  <select id="confidence" name="confidence">
+    <option value=""></option>
+    <option value="low">Low: known gaps, or unverified, etc.</option>
+    <option value="medium">Medium: spot-checked, or some proofing, etc.</option>
+    <option value="high">High: verified, or audited, or confirmed, etc.</option>
+  </select>
+</p>
+
+<p>
+  <label for="source_notes">Any source-of-truth notes?</label>
+  <br>
+  <textarea id="source_notes" name="source_notes" style="width: 100%;"></textarea>
+</p>
+
+</form>
+
+<script>
+function toDatetimeLocalString(date) {
+  const localDate = new Date(date - date.getTimezoneOffset() * 60000); //offset in milliseconds
+  localDate.setSeconds(null);
+  localDate.setMilliseconds(null);
+  return localDate.toISOString().slice(0, -1);
+}
+
+window.addEventListener("load", () => {
+  document.getElementById("when").value = toDatetimeLocalString(new Date());
+});
+</script>
+
+</body>
+</html>
