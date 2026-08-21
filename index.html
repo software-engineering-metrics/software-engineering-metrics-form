@@ -46,14 +46,14 @@
   .actions { margin: 2rem 0 0; padding: 1.25rem; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; }
   button { padding: .6rem 1.25rem; font: inherit; font-weight: 600; border-radius: 4px; cursor: pointer; }
   button[type="submit"] { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
-  button[type="reset"] { background: #fff; color: var(--ink); border: 1px solid var(--rule); }
+  button[type="reset"], button[type="button"] { background: #fff; color: var(--ink); border: 1px solid var(--rule); }
   footer { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: .85rem; }
   a { color: var(--accent); }
   @media (prefers-color-scheme: dark) {
     :root { --ink: #e8edf2; --muted: #9fb0c0; --rule: #33404e; --bg: #131a21; --panel: #1b242d; --accent: #7fb2ee; }
     input[type="text"], input[type="email"], input[type="url"], input[type="date"],
     input[type="number"], input[type="time"], select, textarea { background: #0f1519; }
-    button[type="reset"] { background: #0f1519; }
+    button[type="reset"], button[type="button"] { background: #0f1519; }
     button[type="submit"] { color: #0b1117; }
   }
 </style>
@@ -83,12 +83,12 @@
 </p>
 
 <p>
-  <label for="which">Which organization / office / outfit / etc.?</label>
+  <label for="which_organization">Which organization / office / outfit / etc.?</label>
   <br>
   <input
     type="text"
-    id="which_team"
-    name="which_team"
+    id="which_organization"
+    name="which_organization"
     required
     placeholder="ACME Incorporated" 
     style="width: 100%;" 
@@ -96,12 +96,12 @@
 </p>
 
 <p>
-  <label for="which">Which department / division / directorate / etc.?</label>
+  <label for="which_department">Which department / division / directorate / etc.?</label>
   <br>
   <input
     type="text"
-    id="which_team"
-    name="which_team"
+    id="which_department"
+    name="which_department"
     required
     placeholder="Production Department" 
     style="width: 100%;" 
@@ -109,7 +109,7 @@
 </p>
 
 <p>
-  <label for="which">Which plan / project / product / practice / etc.?</label>
+  <label for="which_plan">Which plan / project / product / practice / etc.?</label>
   <br>
   <input
     type="text"
@@ -122,7 +122,7 @@
 </p>
 
 <p>
-  <label for="which">Which task / todo / topic / etc.?</label>
+  <label for="which_task">Which task / todo / topic / etc.?</label>
   <br>
   <input
     type="text"
@@ -135,12 +135,12 @@
 </p>
 
 <p>
-  <label for="stage">Which phase / stage / queue / etc.?</label>
+  <label for="which_stage">Which phase / stage / queue / etc.?</label>
   <br>
   <input
     type="text"
-    id="which_task"
-    name="which_task"
+    id="which_stage"
+    name="which_stage"
     required
     placeholder="User Acceptance Testing" 
     style="width: 100%;" 
@@ -148,12 +148,12 @@
 </p>
 
 <p>
-  <label for="stage">What status / step / change / etc.?</label>
+  <label for="which_status">What status / step / change / etc.?</label>
   <br>
   <input
     type="text"
-    id="which_task"
-    name="which_task"
+    id="which_status"
+    name="which_status"
     required
     placeholder="Start" 
     style="width: 100%;" 
@@ -169,7 +169,7 @@
     name="when"
     required
   />
-<p>
+</p>
 
 <p>
   <label for="collection_method">Collection method?</label>
@@ -200,9 +200,17 @@
   <textarea id="source_notes" name="source_notes" style="width: 100%;"></textarea>
 </p>
 
+<p>
+  <button type="button" id="export">Export TSV</button>
+  <button type="reset">Clear the form</button>
+</p>
+
 </form>
 
 <script>
+const STORAGE_KEY = "software-engineering-metrics-form";
+const form = document.querySelector("form");
+
 function toDatetimeLocalString(date) {
   const localDate = new Date(date - date.getTimezoneOffset() * 60000); //offset in milliseconds
   localDate.setSeconds(null);
@@ -210,8 +218,132 @@ function toDatetimeLocalString(date) {
   return localDate.toISOString().slice(0, -1);
 }
 
+// Every named control, in document order, one entry per name. Checkboxes
+// sharing a name collapse into one entry holding each checked value.
+function collectFields() {
+  const order = [];
+  const values = {};
+  for (const element of form.elements) {
+    const name = element.name;
+    if (!name || element.disabled) continue;
+    if (["submit", "reset", "button"].includes(element.type)) continue;
+    if (!(name in values)) {
+      order.push(name);
+      values[name] = element.type === "checkbox" ? [] : "";
+    }
+    if (element.type === "checkbox") {
+      if (element.checked) values[name].push(element.value);
+    } else if (element.type === "radio") {
+      if (element.checked) values[name] = element.value;
+    } else {
+      values[name] = element.value;
+    }
+  }
+  return { order, values };
+}
+
+// A tab-separated field cannot hold a literal tab or newline, and the
+// textareas can hold both, so escape them reversibly rather than lose text.
+function escapeCell(value) {
+  return String(value)
+    .replace(/\\/g, "\\\\")
+    .replace(/\t/g, "\\t")
+    .replace(/\r\n?|\n/g, "\\n");
+}
+
+// One header row of field names, one row of values: the shape that appends
+// cleanly into a spreadsheet as submissions accumulate over time.
+function toTSV() {
+  const { order, values } = collectFields();
+  const header = order.map(escapeCell).join("\t");
+  const row = order
+    .map((name) => {
+      const value = values[name];
+      return escapeCell(Array.isArray(value) ? value.join("|") : value);
+    })
+    .join("\t");
+  return `${header}\n${row}\n`;
+}
+
+function exportFilename() {
+  const slug = [form.elements.which_plan?.value, form.elements.which_task?.value]
+    .filter(Boolean)
+    .join(" ")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "");
+  return slug ? `metrics-${slug}.tsv` : "metrics.tsv";
+}
+
+function exportFile() {
+  const blob = new Blob([toTSV()], {
+    type: "text/tab-separated-values;charset=utf-8",
+  });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = exportFilename();
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 0);
+}
+
+function saveToStorage() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(collectFields().values));
+  } catch (error) {
+    console.warn("Could not save the form in this browser:", error);
+  }
+}
+
+function restoreFromStorage() {
+  let saved = null;
+  try {
+    saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  } catch (error) {
+    console.warn("Could not read the saved form:", error);
+  }
+  if (!saved) return;
+  for (const element of form.elements) {
+    if (!element.name || !(element.name in saved)) continue;
+    const value = saved[element.name];
+    if (element.type === "checkbox") {
+      element.checked = Array.isArray(value) && value.includes(element.value);
+    } else if (element.type === "radio") {
+      element.checked = value === element.value;
+    } else if (!["submit", "reset", "button"].includes(element.type)) {
+      element.value = value;
+    }
+  }
+}
+
+function clearStorage() {
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+  } catch (error) {
+    console.warn("Could not clear the saved form:", error);
+  }
+}
+
+let saveTimer = null;
+form.addEventListener("input", () => {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(saveToStorage, 250);
+});
+form.addEventListener("change", saveToStorage);
+form.addEventListener("reset", () => {
+  clearTimeout(saveTimer);
+  clearStorage();
+});
+
+document.getElementById("export").addEventListener("click", exportFile);
+
 window.addEventListener("load", () => {
-  document.getElementById("when").value = toDatetimeLocalString(new Date());
+  restoreFromStorage();
+  // Default to now, but never overwrite a restored answer.
+  const when = document.getElementById("when");
+  if (!when.value) when.value = toDatetimeLocalString(new Date());
 });
 </script>
 
