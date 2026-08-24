@@ -128,7 +128,9 @@ accumulate over time, which a key-and-value shape does not.
 
 The button is labelled "Export TSV" and the file is named for the plan and the
 task, for example `metrics-phoenix-plan-add-feature-x.tsv`, falling back to
-`metrics.tsv` when neither is answered.
+`metrics.tsv` when neither is answered. Accents are folded rather than dropped,
+so a plan named "Fenetre" gives `metrics-fenetre.tsv` and not
+`metrics-fen-tre.tsv`.
 
 A tab-separated field cannot hold a literal tab or newline, and `notes` can
 hold both. They are escaped reversibly, as `\t` and `\n`, with a literal

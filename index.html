@@ -283,6 +283,9 @@ function exportFilename() {
   const slug = [form.elements.plan?.value, form.elements.task?.value]
     .filter(Boolean)
     .join(" ")
+    // Fold accents first, so "Fenetre" slugs to fenetre and not fen-tre.
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-|-$/g, "");

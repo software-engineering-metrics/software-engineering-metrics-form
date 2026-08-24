@@ -36,6 +36,9 @@ export function exportFilename(state: FormState): string {
   const slug = [state.values.plan, state.values.task]
     .filter(Boolean)
     .join(' ')
+    // Fold accents first, so "Fenêtre" slugs to fenetre and not fen-tre.
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-|-$/g, '');
