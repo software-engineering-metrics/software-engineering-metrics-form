@@ -83,12 +83,12 @@
 </p>
 
 <p>
-  <label for="which_organization">Which organization / office / outfit / etc.?</label>
+  <label for="organization">Which organization / office / outfit / etc.?</label>
   <br>
   <input
     type="text"
-    id="which_organization"
-    name="which_organization"
+    id="organization"
+    name="organization"
     required
     placeholder="ACME Incorporated" 
     style="width: 100%;" 
@@ -96,51 +96,51 @@
 </p>
 
 <p>
-  <label for="which_department">Which department / division / directorate / etc.?</label>
+  <label for="division">Which division / department / directorate / etc.?</label>
   <br>
   <input
     type="text"
-    id="which_department"
-    name="which_department"
+    id="division"
+    name="division"
     required
-    placeholder="Production Department" 
+    placeholder="Sales Division" 
     style="width: 100%;" 
   />
 </p>
 
 <p>
-  <label for="which_plan">Which plan / project / product / practice / etc.?</label>
+  <label for="plan">Which plan / project / product / practice / etc.?</label>
   <br>
   <input
     type="text"
-    id="which_plan"
-    name="which_plan"
+    id="plan"
+    name="plan"
     required
-    placeholder="Phoenix Project" 
+    placeholder="Phoenix Plan" 
     style="width: 100%;" 
   />
 </p>
 
 <p>
-  <label for="which_task">Which task / todo / topic / etc.?</label>
+  <label for="task">Which task / todo / topic / etc.?</label>
   <br>
   <input
     type="text"
-    id="which_task"
-    name="which_task"
+    id="task"
+    name="task"
     required
-    placeholder="Implement Feature X" 
+    placeholder="Add feature X" 
     style="width: 100%;" 
   />
 </p>
 
 <p>
-  <label for="which_stage">Which phase / stage / queue / etc.?</label>
+  <label for="step">Which step / stage / phase / queue / etc.?</label>
   <br>
   <input
     type="text"
-    id="which_stage"
-    name="which_stage"
+    id="step"
+    name="step"
     required
     placeholder="User Acceptance Testing" 
     style="width: 100%;" 
@@ -148,12 +148,12 @@
 </p>
 
 <p>
-  <label for="which_status">What status / step / change / etc.?</label>
+  <label for="status">What status / step / change / etc.?</label>
   <br>
   <input
     type="text"
-    id="which_status"
-    name="which_status"
+    id="status"
+    name="status"
     required
     placeholder="Start" 
     style="width: 100%;" 
@@ -161,25 +161,36 @@
 </p>
 
 <p>
-  <label for="when">When is this occuring?</label>
+  <label for="date">When is this occurring? Date (UTC)</label>
   <br>
   <input
-    type="datetime-local"
-    id="when"
-    name="when"
+    type="date"
+    id="date"
+    name="date"
     required
   />
 </p>
 
 <p>
-  <label for="collection_method">Collection method?</label>
+  <label for="time">When is this occurring? Time (UTC)</label>
   <br>
-  <select id="collection_method" name="collection_method">
+  <input
+    type="time"
+    id="time"
+    name="time"
+    required
+  />
+</p>
+
+<p>
+  <label for="collection">Collection method?</label>
+  <br>
+  <select id="collection" name="collection">
     <option value="">Select a method</option>
     <option value="estimate">Estimate</option>
     <option value="manual">Manual collection</option>
     <option value="assisted">Assisted collection (some manual, some automated)</option>
-    <option value="automated">Automated collection</option>
+    <option value="automatic">Automatic collection</option>
   </select>
 </p>
 
@@ -195,9 +206,9 @@
 </p>
 
 <p>
-  <label for="source_notes">Any source-of-truth notes?</label>
+  <label for="notes">Any notes, such as narratives, sources, extras, ideas?</label>
   <br>
-  <textarea id="source_notes" name="source_notes" style="width: 100%;"></textarea>
+  <textarea id="notes" name="notes" style="width: 100%;"></textarea>
 </p>
 
 <p>
@@ -211,11 +222,14 @@
 const STORAGE_KEY = "software-engineering-metrics-form";
 const form = document.querySelector("form");
 
-function toDatetimeLocalString(date) {
-  const localDate = new Date(date - date.getTimezoneOffset() * 60000); //offset in milliseconds
-  localDate.setSeconds(null);
-  localDate.setMilliseconds(null);
-  return localDate.toISOString().slice(0, -1);
+// The date and time are always UTC, never the browser's local timezone, so
+// that two submissions from two offices are directly comparable.
+function utcDate(date) {
+  return date.toISOString().slice(0, 10);
+}
+
+function utcTime(date) {
+  return date.toISOString().slice(11, 16);
 }
 
 // Every named control, in document order, one entry per name. Checkboxes
@@ -266,7 +280,7 @@ function toTSV() {
 }
 
 function exportFilename() {
-  const slug = [form.elements.which_plan?.value, form.elements.which_task?.value]
+  const slug = [form.elements.plan?.value, form.elements.task?.value]
     .filter(Boolean)
     .join(" ")
     .toLowerCase()
@@ -326,6 +340,46 @@ function clearStorage() {
   }
 }
 
+// Query parameters pre-populate the form, so a link can carry a submission's
+// context: /?organization=ACME+Inc&plan=Phoenix+Plan&status=Start
+//
+// A parameter's name is the field's id, and a select's value is one of the
+// values it offers. Anything else is ignored rather than guessed at.
+
+function offeredValue(select, raw) {
+  for (const option of select.options) {
+    if (option.value && option.value === raw) return option.value;
+  }
+  return null;
+}
+
+function valueFor(element, raw) {
+  if (element.tagName === "SELECT") return offeredValue(element, raw);
+  return raw;
+}
+
+function applyQueryParameters() {
+  const params = new URLSearchParams(window.location.search);
+  let applied = false;
+  for (const element of form.elements) {
+    if (!element.id || !params.has(element.id)) continue;
+    const raw = params.get(element.id).trim();
+    if (!raw) continue;
+    const value = valueFor(element, raw);
+    if (value === null) {
+      console.warn(`Ignoring ?${element.id}=${raw}: not a value ${element.id} accepts.`);
+      continue;
+    }
+    element.value = value;
+    if (element.value === "") {
+      console.warn(`Ignoring ?${element.id}=${raw}: the field would not accept it.`);
+      continue;
+    }
+    applied = true;
+  }
+  return applied;
+}
+
 let saveTimer = null;
 form.addEventListener("input", () => {
   clearTimeout(saveTimer);
@@ -341,9 +395,16 @@ document.getElementById("export").addEventListener("click", exportFile);
 
 window.addEventListener("load", () => {
   restoreFromStorage();
-  // Default to now, but never overwrite a restored answer.
-  const when = document.getElementById("when");
-  if (!when.value) when.value = toDatetimeLocalString(new Date());
+  // A link is a deliberate instruction, so its parameters win over whatever
+  // the browser had saved from last time.
+  const fromQuery = applyQueryParameters();
+  // Default to now in UTC, but never overwrite a restored or supplied answer.
+  const now = new Date();
+  const date = document.getElementById("date");
+  const time = document.getElementById("time");
+  if (!date.value) date.value = utcDate(now);
+  if (!time.value) time.value = utcTime(now);
+  if (fromQuery) saveToStorage();
 });
 </script>
 
