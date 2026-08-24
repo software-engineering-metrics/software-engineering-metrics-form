@@ -3,11 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
-  "description": "Software Engineering Metrics — capture form (SvelteKit + Lily Design System)",
+  "description": "Software Engineering Metrics \u2014 capture form (SvelteKit + Lily Design System)",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
+    "test": "node --test \"tests/*.test.js\"",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json"
   },
   "devDependencies": {
