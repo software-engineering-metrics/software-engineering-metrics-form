@@ -14,24 +14,55 @@ import { sections, fields } from '../src/lib/fields.ts';
 
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const bas = readFileSync(new URL('../index.bas', import.meta.url), 'utf8');
+const schemaSource = readFileSync(new URL('../src/lib/fields.ts', import.meta.url), 'utf8');
 
+/**
+ * @typedef {object} ParsedField
+ * @property {string} name
+ * @property {string} label
+ * @property {string} kind
+ * @property {boolean} required
+ * @property {string[]} [choices]
+ */
+
+/**
+ * @param {string} attributes
+ * @param {string} name
+ * @returns {string | undefined}
+ */
 function attribute(attributes, name) {
   const found = attributes.match(new RegExp(`\\b${name}="([^"]*)"`));
   return found ? found[1] : undefined;
 }
 
+/**
+ * @param {string} source
+ * @param {string} id
+ * @returns {string | undefined}
+ */
 function labelFor(source, id) {
   const found = source.match(new RegExp(`<label for="${id}">([^<]*)</label>`));
   return found ? found[1].trim() : undefined;
 }
 
+/**
+ * @param {string} tag
+ * @param {string | undefined} type
+ * @returns {string}
+ */
 function kindOf(tag, type) {
-  if (tag === 'select' || tag === 'textarea') return tag === 'select' ? 'select' : 'textarea';
-  return type;
+  if (tag === 'select' || tag === 'textarea') return tag;
+  // An input with no type attribute is a text input, per HTML.
+  return type ?? 'text';
 }
 
-/** Every named control in index.html, in document order. */
+/**
+ * Every named control in index.html, in document order.
+ * @param {string} source
+ * @returns {ParsedField[]}
+ */
 function parseFormFields(source) {
+  /** @type {ParsedField[]} */
   const parsed = [];
   const tags = /<(input|select|textarea)\b([\s\S]*?)(\/>|>)/g;
   let match;
@@ -39,9 +70,10 @@ function parseFormFields(source) {
     const [, tag, attributes] = match;
     const name = attribute(attributes, 'name');
     if (!name) continue;
+    /** @type {ParsedField} */
     const field = {
       name,
-      label: labelFor(source, attribute(attributes, 'id') ?? name),
+      label: labelFor(source, attribute(attributes, 'id') ?? name) ?? '',
       kind: kindOf(tag, attribute(attributes, 'type')),
       required: /\brequired\b/.test(attributes)
     };
@@ -58,6 +90,8 @@ function parseFormFields(source) {
 /**
  * Every question declared in the Excel form's Fields() function, in order.
  * VBA continues a long line with a trailing underscore, so join those first.
+ * @param {string} source
+ * @returns {ParsedField[]}
  */
 function parseBasFields(source) {
   const joined = source.replace(/_\s*\n\s*/g, ' ');
@@ -74,6 +108,7 @@ function parseBasFields(source) {
 }
 
 // The Excel form names its controls for what they are, not for their HTML tag.
+/** @type {Record<string, string>} */
 const HTML_KIND_AS_BAS = {
   email: 'email',
   text: 'text',
@@ -115,8 +150,8 @@ test('a select offers the same values in both forms', () => {
   for (const [index, field] of scopeFields.entries()) {
     if (field.kind !== 'select') continue;
     assert.deepEqual(
-      field.choices.map((choice) => choice.value),
-      shortForm[index].choices,
+      (field.choices ?? []).map((choice) => choice.value),
+      shortForm[index].choices ?? [],
       `options for ${field.name}`
     );
   }
@@ -153,9 +188,9 @@ test('no name is used by two questions', () => {
 test('neither form records a local wall-clock time', () => {
   assert.ok(!html.includes('datetime-local'), 'index.html uses no datetime-local input');
   assert.ok(!html.includes('getTimezoneOffset'), 'index.html converts no timezones');
-  assert.deepEqual(
-    fields.filter((field) => field.kind === 'datetime-local').map((field) => field.name),
-    []
+  assert.ok(
+    !schemaSource.includes('datetime-local'),
+    'the schema declares no datetime-local question'
   );
 });
 
