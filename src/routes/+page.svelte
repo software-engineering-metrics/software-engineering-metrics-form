@@ -25,6 +25,7 @@
 
   import { sections, emptyState, type FieldSpec } from '$lib/fields';
   import { toTSV, exportFilename } from '$lib/tsv';
+  import { applyQuery } from '$lib/query';
   import * as storage from '$lib/storage';
 
   let answers = $state(emptyState());
@@ -45,10 +46,19 @@
   // reads and writes the same state.
   onMount(() => {
     const loaded = storage.load();
-    // Default to now in UTC, but never overwrite a restored answer.
+
+    // A link is a deliberate instruction, so its parameters win over whatever
+    // the browser had saved, but only for the questions it names.
+    const query = applyQuery(loaded, new URLSearchParams(window.location.search));
+    for (const ignored of query.ignored) {
+      console.warn(`Ignoring ?${ignored}: not a value that question accepts.`);
+    }
+
+    // Default to now in UTC, but never overwrite a restored or supplied answer.
     const now = new Date();
     if (!loaded.values.date) loaded.values.date = utcDate(now);
     if (!loaded.values.time) loaded.values.time = utcTime(now);
+
     answers = loaded;
     restored = true;
   });

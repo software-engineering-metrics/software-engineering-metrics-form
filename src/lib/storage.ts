@@ -3,7 +3,7 @@
 // Every call is guarded: Safari in private mode and browsers with storage
 // disabled throw on access rather than degrading quietly.
 
-import { emptyState, type FormState } from './fields';
+import { emptyState, type FormState } from './fields.ts';
 
 export const STORAGE_KEY = 'software-engineering-metrics-form';
 

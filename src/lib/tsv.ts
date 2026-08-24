@@ -1,6 +1,6 @@
 // Converting the answers to tab-separated values.
 
-import { fields, type FormState } from './fields';
+import { fields, type FormState } from './fields.ts';
 
 // A tab-separated field cannot hold a literal tab or newline, and the notes
 // textareas can hold both, so escape them reversibly rather than lose text.

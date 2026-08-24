@@ -151,7 +151,8 @@ usable when that happens.
    dependency, no build step, no back end.
 2. **One name per question**, shared by the `id`, the `name`, the query
    parameter, and the export column.
-3. **No aliases.** Not for parameter names, not for select values.
+3. **No aliases.** Not for parameter names, not for select values. This holds
+   in `index.html`, in `index.bas`, and in `src/lib/query.ts`.
 4. **Time is UTC**, and is never converted to or from local time.
 5. **Never lose a submitter's text.** Escape it, do not truncate it.
 6. **A value the form cannot accept is ignored and reported**, never guessed
@@ -204,11 +205,14 @@ disagree on a name, a label, a control, a select's values, or whether an
 answer is required, so the drift is caught rather than discovered later in a
 spreadsheet.
 
+Pre-filling works the same way in both, by the same rule, so a link that names
+a question either form asks fills it in either form. The application extends it
+to all 240 questions, and says a checklist's several answers by repeating the
+parameter: `?ai_usage=agentic&ai_usage=test_generation`.
+
 Where the two still differ, on purpose:
 
 - The application asks a further 228 questions, which `index.html` does not.
-- The application has no query-string pre-filling. Nothing prevents it; no one
-  has needed it yet.
 
 ## The usual workflow
 
