@@ -33,7 +33,7 @@ export function toTSV(state: FormState): string {
 
 /** A filename that identifies the submission, falling back when unanswered. */
 export function exportFilename(state: FormState): string {
-  const slug = [state.values.which_plan, state.values.which_task]
+  const slug = [state.values.plan, state.values.task]
     .filter(Boolean)
     .join(' ')
     .toLowerCase()

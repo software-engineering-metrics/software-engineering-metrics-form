@@ -9,7 +9,7 @@ export type FieldKind =
   | 'text'
   | 'url'
   | 'date'
-  | 'datetime-local'
+  | 'time'
   | 'select'
   | 'textarea'
   | 'number'
@@ -88,55 +88,61 @@ export const sections: SectionSpec[] = [
             placeholder: 'ann.adams@example.com'
           },
           {
-            name: 'which_organization',
+            name: 'organization',
             label: 'Which organization / office / outfit / etc.?',
             kind: 'text',
             required: true,
             placeholder: 'ACME Incorporated'
           },
           {
-            name: 'which_department',
-            label: 'Which department / division / directorate / etc.?',
+            name: 'division',
+            label: 'Which division / department / directorate / etc.?',
             kind: 'text',
             required: true,
             placeholder: 'Production Department'
           },
           {
-            name: 'which_plan',
+            name: 'plan',
             label: 'Which plan / project / product / practice / etc.?',
             kind: 'text',
             required: true,
             placeholder: 'Phoenix Project'
           },
           {
-            name: 'which_task',
+            name: 'task',
             label: 'Which task / todo / topic / etc.?',
             kind: 'text',
             required: true,
             placeholder: 'Implement Feature X'
           },
           {
-            name: 'which_stage',
-            label: 'Which phase / stage / queue / etc.?',
+            name: 'step',
+            label: 'Which step / stage / phase / queue / etc.?',
             kind: 'text',
             required: true,
             placeholder: 'User Acceptance Testing'
           },
           {
-            name: 'which_status',
+            name: 'status',
             label: 'What status / step / change / etc.?',
             kind: 'text',
             required: true,
             placeholder: 'Start'
           },
           {
-            name: 'when',
-            label: 'When is this occurring?',
-            kind: 'datetime-local',
+            name: 'date',
+            label: 'When is this occurring? Date (UTC)',
+            kind: 'date',
             required: true
           },
           {
-            name: 'collection_method',
+            name: 'time',
+            label: 'When is this occurring? Time (UTC)',
+            kind: 'time',
+            required: true
+          },
+          {
+            name: 'collection',
             label: 'Collection method?',
             kind: 'select',
             choices: [
@@ -144,7 +150,7 @@ export const sections: SectionSpec[] = [
               { value: 'estimate', label: 'Estimate' },
               { value: 'manual', label: 'Manual collection' },
               { value: 'assisted', label: 'Assisted collection (some manual, some automated)' },
-              { value: 'automated', label: 'Automated collection' }
+              { value: 'automatic', label: 'Automatic collection' }
             ]
           },
           {
@@ -159,8 +165,8 @@ export const sections: SectionSpec[] = [
             ]
           },
           {
-            name: 'source_notes',
-            label: 'Any source-of-truth notes?',
+            name: 'notes',
+            label: 'Any notes, such as narratives, sources, extras, ideas?',
             kind: 'textarea'
           }
         ]

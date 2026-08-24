@@ -8,7 +8,7 @@
   import EmailInput from '$lib/components/EmailInput/EmailInput.svelte';
   import UrlInput from '$lib/components/UrlInput/UrlInput.svelte';
   import DateInput from '$lib/components/DateInput/DateInput.svelte';
-  import DateTimeLocalInput from '$lib/components/DateTimeLocalInput/DateTimeLocalInput.svelte';
+  import TimeInput from '$lib/components/TimeInput/TimeInput.svelte';
   import NumberInput from '$lib/components/NumberInput/NumberInput.svelte';
   import TextAreaInput from '$lib/components/TextAreaInput/TextAreaInput.svelte';
   import Select from '$lib/components/Select/Select.svelte';
@@ -30,11 +30,14 @@
   let answers = $state(emptyState());
   let restored = $state(false);
 
-  function toDatetimeLocalString(date: Date): string {
-    const localDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
-    localDate.setSeconds(0);
-    localDate.setMilliseconds(0);
-    return localDate.toISOString().slice(0, -1);
+  // The date and time are always UTC, never the browser's local timezone, so
+  // that two submissions from two offices are directly comparable.
+  function utcDate(date: Date): string {
+    return date.toISOString().slice(0, 10);
+  }
+
+  function utcTime(date: Date): string {
+    return date.toISOString().slice(11, 16);
   }
 
   // Storage is a browser API, so read it after mount rather than during SSR.
@@ -42,8 +45,10 @@
   // reads and writes the same state.
   onMount(() => {
     const loaded = storage.load();
-    // Default to now, but never overwrite a restored answer.
-    if (!loaded.values.when) loaded.values.when = toDatetimeLocalString(new Date());
+    // Default to now in UTC, but never overwrite a restored answer.
+    const now = new Date();
+    if (!loaded.values.date) loaded.values.date = utcDate(now);
+    if (!loaded.values.time) loaded.values.time = utcTime(now);
     answers = loaded;
     restored = true;
   });
@@ -81,7 +86,9 @@
     // Svelte's back.
     event.preventDefault();
     answers = emptyState();
-    answers.values.when = toDatetimeLocalString(new Date());
+    const now = new Date();
+    answers.values.date = utcDate(now);
+    answers.values.time = utcTime(now);
     storage.clear();
   }
 
@@ -169,8 +176,8 @@
             required={field.required}
             bind:value={answers.values[field.name]}
           />
-        {:else if field.kind === 'datetime-local'}
-          <DateTimeLocalInput
+        {:else if field.kind === 'time'}
+          <TimeInput
             label={field.label}
             id={field.name}
             name={field.name}
