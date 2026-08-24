@@ -88,7 +88,6 @@ that is missing, renamed, or the wrong type.
   copying rather than from a registry.
 - `src/routes/+page.svelte` : the long form.
 - `tests/` : run with `pnpm test`.
-- `todo.html` : the remains of the original single-file draft, now migrated.
 
 ## Contributing
 
