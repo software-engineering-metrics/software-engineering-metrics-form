@@ -65,14 +65,24 @@ pnpm check     # svelte-check
 pnpm test      # node --test
 ```
 
+Node 24 or newer. The tests import `src/lib/*.ts` directly, which needs a Node
+that strips types without a flag.
+[`.github/workflows/test.yml`](.github/workflows/test.yml) runs the check, the
+tests, and the build on every push.
+
 `index.html` needs none of this. Open it in a browser, or serve the directory
 with any static file server.
 
 The tests run on Node's own test runner and add no dependency. They compare
 the three forms against each other and fail when they disagree on a question's
 name, wording, control, offered values, or whether it is required. They also
-cover the export's escaping and the saved copy's handling of a stored answer
-that is missing, renamed, or the wrong type.
+cover both exports, pre-filling from a link, and the saved copy's handling of
+a stored answer that is missing, renamed, or the wrong type.
+
+`index.bas` cannot be run here, since there is no Excel to run it in, so it is
+checked structurally instead: that every block closes by its own kind, that
+the macros an operator runs are public, and that the time is formatted with
+minutes rather than months.
 
 ## Structure
 

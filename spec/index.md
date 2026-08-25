@@ -281,7 +281,8 @@ Where the two still differ, on purpose:
    naming rule, the query-string rule, the time rule, or the export format.
 3. Edit `index.html` to match.
 4. Run `pnpm test`. It checks `index.html`, `index.bas`, and the schema
-   against each other, and fails on any disagreement between them.
+   against each other, and fails on any disagreement between them. The same
+   run happens on every push, in `.github/workflows/test.yml`.
 5. Check it in a browser: fill the form, reload to confirm the answers come
    back, export, and open the file.
 6. If the change touches pre-filling, check a link that exercises it, and
