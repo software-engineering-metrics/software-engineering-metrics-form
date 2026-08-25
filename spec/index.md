@@ -186,7 +186,7 @@ nowhere else yet.
 5. **Never lose a submitter's text.** Escape it, do not truncate it.
 6. **A value the form cannot accept is ignored and reported**, never guessed
    at and never allowed to blank a field.
-7. **`pnpm test` passes** before a change is considered done.
+7. **`pnpm verify` passes** before a change is considered done.
 8. **`index.html` wires its buttons by id**, not through a framework, so it
    keeps working with nothing hydrating it. The application in `src/` is the
    other way round and uses hydration.
@@ -280,9 +280,11 @@ Where the two still differ, on purpose:
 2. Edit this specification first if the change touches the field list, the
    naming rule, the query-string rule, the time rule, or the export format.
 3. Edit `index.html` to match.
-4. Run `pnpm test`. It checks `index.html`, `index.bas`, and the schema
-   against each other, and fails on any disagreement between them. The same
-   run happens on every push, in `.github/workflows/test.yml`.
+4. Run `pnpm verify`: the type check, the tests, and the build, in one
+   command, so none of the three gets skipped. The tests compare
+   `index.html`, `index.bas`, and the schema against each other, and fail on
+   any disagreement. The same run happens on every push, in
+   `.github/workflows/test.yml`.
 5. Check it in a browser: fill the form, reload to confirm the answers come
    back, export, and open the file.
 6. If the change touches pre-filling, check a link that exercises it, and

@@ -19,6 +19,7 @@ const code = bas.split('\n').map((line) => {
   return (comment === -1 ? withoutStrings : withoutStrings.slice(0, comment)).trim();
 });
 
+/** @type {[RegExp, string][]} */
 const OPENERS = [
   [/^(?:Public |Private |Friend )?Sub\b/, 'Sub'],
   [/^(?:Public |Private |Friend )?Function\b/, 'Function'],
@@ -28,7 +29,9 @@ const OPENERS = [
 ];
 
 test('every block that opens is closed, by its own kind', () => {
+  /** @type {{ kind: string, number: number }[]} */
   const stack = [];
+  /** @type {string[]} */
   const problems = [];
 
   code.forEach((line, index) => {
@@ -36,11 +39,11 @@ test('every block that opens is closed, by its own kind', () => {
     const closing = line.match(/^End (Sub|Function|With|Select|Type)\b/);
     if (closing) {
       const expected = closing[1] === 'Select' ? 'Select Case' : closing[1];
-      if (stack.length === 0) {
+      const opened = stack.pop();
+      if (!opened) {
         problems.push(`line ${number}: ${line} closes nothing`);
         return;
       }
-      const opened = stack.pop();
       if (opened.kind !== expected) {
         problems.push(`line ${number}: ${line} closes a ${opened.kind} opened at line ${opened.number}`);
       }

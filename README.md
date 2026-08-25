@@ -63,6 +63,7 @@ pnpm build     # prerenders it into build/
 pnpm preview   # serve the production build
 pnpm check     # svelte-check
 pnpm test      # node --test
+pnpm verify    # check, test, and build, in one command
 ```
 
 Node 24 or newer. The tests import `src/lib/*.ts` directly, which needs a Node
