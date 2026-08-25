@@ -185,6 +185,13 @@ Public Sub ClearMetricsForm()
         MsgBox "Run ShowMetricsForm first.", vbExclamation, "No form yet"
         Exit Sub
     End If
+
+    ' Answers on the form have not reached the data sheet yet, so this throws
+    ' away work that exists nowhere else. Ask first.
+    If MsgBox("Clear every answer on the form?" & vbCrLf & vbCrLf & _
+              "Rows already written to the " & DATA_SHEET & " sheet are kept.", _
+              vbYesNo + vbQuestion + vbDefaultButton2, "Clear") <> vbYes Then Exit Sub
+
     ClearAnswers ws
     SetStatus ws, "Cleared.", False
 End Sub

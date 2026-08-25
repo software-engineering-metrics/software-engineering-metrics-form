@@ -45,7 +45,6 @@
   td select, td input { margin: 0; }
   .actions { margin: 2rem 0 0; padding: 1.25rem; background: var(--panel); border: 1px solid var(--rule); border-radius: 6px; }
   button { padding: .6rem 1.25rem; font: inherit; font-weight: 600; border-radius: 4px; cursor: pointer; }
-  button[type="submit"] { background: var(--accent); color: #fff; border: 1px solid var(--accent); }
   button[type="reset"], button[type="button"] { background: #fff; color: var(--ink); border: 1px solid var(--rule); }
   footer { margin-top: 2.5rem; padding-top: 1rem; border-top: 1px solid var(--rule); color: var(--muted); font-size: .85rem; }
   a { color: var(--accent); }
@@ -54,7 +53,6 @@
     input[type="text"], input[type="email"], input[type="url"], input[type="date"],
     input[type="number"], input[type="time"], select, textarea { background: #0f1519; }
     button[type="reset"], button[type="button"] { background: #0f1519; }
-    button[type="submit"] { color: #0b1117; }
   }
 </style>
 </head>
@@ -67,7 +65,7 @@
 
 <p>Complete as much as you reasonably can, using whatever reasonable estimates or metrics you have.</p>
 
-<form action="/metrics/submissions" method="post" accept-charset="utf-8">
+<form accept-charset="utf-8">
 
 <p>
   <label for="email">Your email address?</label>

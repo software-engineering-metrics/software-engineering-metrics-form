@@ -27,8 +27,13 @@ runs from a file share, a static host, or a local disk is easier to hand over
 than one that needs a toolchain. Keep it that way: no framework, no bundler,
 no package for this file.
 
-The form has no back end. `submit` and the export button both produce a file
-the submitter downloads. Nothing leaves the browser on its own.
+The form has no back end, and does not pretend to. There are three buttons,
+Export TSV, Export JSON, and Clear, and no Submit: exporting is how a
+submission leaves the browser, and a button named Submit that quietly
+downloaded a file would say otherwise. Nothing leaves the browser on its own.
+
+If a server is added later, a Submit button is a deliberate addition rather
+than something to be wired back up to an `action` that was left behind.
 
 ## The fields
 
@@ -202,6 +207,9 @@ Two rules carry across from the web form, for the same reasons:
 
 - A select refuses a value it does not offer, exactly, with no near-enough
   matching.
+- Clearing asks first. On the form the answers have not reached the data sheet
+  yet, so it discards work that exists nowhere else. Rows already written are
+  kept.
 - The date and time are UTC. Excel has no UTC clock, so the macro asks Windows
   to convert. Where that is unavailable, such as Excel for Mac, it says so in
   the form and asks the operator for the UTC values rather than recording a

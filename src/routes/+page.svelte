@@ -18,7 +18,6 @@
   import CheckboxGroup from '$lib/components/CheckboxGroup/CheckboxGroup.svelte';
   import CheckboxInput from '$lib/components/CheckboxInput/CheckboxInput.svelte';
   import Button from '$lib/components/Button/Button.svelte';
-  import SubmitInput from '$lib/components/SubmitInput/SubmitInput.svelte';
   import Header from '$lib/components/Header/Header.svelte';
   import Footer from '$lib/components/Footer/Footer.svelte';
 
@@ -134,9 +133,10 @@
     handleClear();
   }
 
-  function handleSubmit() {
-    // No server yet: the export is how a submission leaves the browser.
-    handleExport();
+  function handleSubmit(event: SubmitEvent) {
+    // There is nowhere to submit to. Exporting is how a submission leaves the
+    // browser, and the buttons say so plainly.
+    event.preventDefault();
   }
 </script>
 
@@ -309,7 +309,6 @@
     {/each}
 
     <div class="form-actions">
-      <SubmitInput value="Submit metrics" />
       <Button type="button" onclick={handleExport}>Export TSV</Button>
       <Button type="button" onclick={handleExportJson}>Export JSON</Button>
       <Button type="button" onclick={handleClear}>Clear</Button>
