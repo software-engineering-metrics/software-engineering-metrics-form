@@ -8,6 +8,11 @@ If you are a contributor or an agent about to change anything, read this file
 first. It tells you what the form is, which rules hold it together, and which
 ones you may not break.
 
+One topic has its own file:
+[`web-form-local-storage-exports/`](web-form-local-storage-exports/index.md)
+governs the saved copy, the Clear button, and the two exports. Where it and
+this overview disagree, it wins.
+
 ## What the form is
 
 [`index.html`](../index.html) is the capture form: a single, self-contained
@@ -120,32 +125,47 @@ So:
 
 ## The export
 
-The export button and `submit` both produce
+"Export TSV" produces
 [tab-separated values](https://en.wikipedia.org/wiki/Tab-separated_values):
-one header row of field names, then one row of values, in the order the fields
-appear above. That shape appends cleanly into a spreadsheet as submissions
-accumulate over time, which a key-and-value shape does not.
+one heading row of field names, then one row of values, in the order the
+fields appear above. That shape appends cleanly into a spreadsheet as
+submissions accumulate over time, which a key-and-value shape does not. It
+downloads as `export.tsv`.
 
-The button is labelled "Export TSV" and the file is named for the plan and the
-task, for example `metrics-phoenix-plan-add-feature-x.tsv`, falling back to
-`metrics.tsv` when neither is answered. Accents are folded rather than dropped,
-so a plan named "Fenetre" gives `metrics-fenetre.tsv` and not
-`metrics-fen-tre.tsv`.
+A tab-separated field cannot hold a literal tab, carriage return, or newline,
+and `notes` can hold all three. They are escaped reversibly, as `\t`, `\r`,
+and `\n`, with a literal backslash escaped as `\\` first, so that a
+backslash cannot disguise one of the others. Text is never dropped to make it
+fit.
 
-A tab-separated field cannot hold a literal tab or newline, and `notes` can
-hold both. They are escaped reversibly, as `\t` and `\n`, with a literal
-backslash escaped as `\\`. Text is never dropped to make it fit.
+"Export JSON" produces the same answers shaped by what each control is: text
+is a string, a tick list is an array, a number is a number, or `null` when
+unanswered. It downloads as `export.json`. Nothing is escaped there, because
+JSON brings its own escaping and applying both would double it.
+
+The long form in `src/` still names its file for the plan and the task, for
+example `metrics-phoenix-plan-add-feature-x.tsv`, with accents folded rather
+than dropped. That is a difference between the two rather than an oversight:
+the fixed name is set by
+[`web-form-local-storage-exports/`](web-form-local-storage-exports/index.md)
+for the short form.
 
 ## Browser storage
 
 Answers are kept in
 [Web Storage](https://en.wikipedia.org/wiki/Web_storage) under the key
-`software-engineering-metrics-form`, saved as they are typed and restored on
-the next visit. Clearing the form also clears the saved copy.
+`software-engineering-metrics-form`, saved 400 ms after a keystroke or a tick
+and restored on the next visit. The delay keeps a long answer from being
+written on every character.
 
 Every call is guarded. A browser with storage disabled, or Safari in private
-mode, throws on access rather than degrading quietly, and the form must stay
-usable when that happens.
+mode, throws on access. The form stays usable, and says so rather than failing
+silently: "This browser will not let the page save your answers. Export before
+you leave."
+
+"Clear" empties every answer, erases the saved copy, and puts the UTC date and
+time back to now. It asks first, because it throws away work that exists
+nowhere else yet.
 
 ## Rules that may not break
 
@@ -160,6 +180,8 @@ usable when that happens.
 6. **A value the form cannot accept is ignored and reported**, never guessed
    at and never allowed to blank a field.
 7. **`pnpm test` passes** before a change is considered done.
+8. **The buttons are wired by id**, not by a framework, so `index.html` keeps
+   working with nothing hydrating it.
 
 ## The Excel form
 

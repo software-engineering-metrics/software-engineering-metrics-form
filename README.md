@@ -20,8 +20,9 @@ produces one row of data.
 All three write the same columns, in the same order, with the same names, so
 their output can be combined. The web forms export
 [tab-separated values](https://en.wikipedia.org/wiki/Tab-separated_values):
-one header row, then one row per submission. The Excel form appends its row to
-a worksheet with the same headings.
+one heading row, then one row per submission. `index.html` also exports the
+same answers as JSON, shaped by what each control is. The Excel form appends
+its row to a worksheet with the same headings.
 
 The long form opens with the same twelve questions as the short one, then asks
 228 more, grouped into eleven further sections: governance, flow, code review,

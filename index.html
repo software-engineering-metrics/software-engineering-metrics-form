@@ -212,9 +212,12 @@
 </p>
 
 <p>
-  <button type="button" id="export">Export TSV</button>
-  <button type="reset">Clear the form</button>
+  <button type="button" id="export-tsv">Export TSV</button>
+  <button type="button" id="export-json">Export JSON</button>
+  <button type="button" id="clear">Clear</button>
 </p>
+
+<p id="storage-status" role="status" aria-live="polite"></p>
 
 </form>
 
@@ -262,7 +265,8 @@ function escapeCell(value) {
   return String(value)
     .replace(/\\/g, "\\\\")
     .replace(/\t/g, "\\t")
-    .replace(/\r\n?|\n/g, "\\n");
+    .replace(/\r/g, "\\r")
+    .replace(/\n/g, "\\n");
 }
 
 // One header row of field names, one row of values: the shape that appends
@@ -279,38 +283,60 @@ function toTSV() {
   return `${header}\n${row}\n`;
 }
 
-function exportFilename() {
-  const slug = [form.elements.plan?.value, form.elements.task?.value]
-    .filter(Boolean)
-    .join(" ")
-    // Fold accents first, so "Fenetre" slugs to fenetre and not fen-tre.
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-  return slug ? `metrics-${slug}.tsv` : "metrics.tsv";
+// Every answer, shaped by what its control is: a tick list is an array, a
+// number is a number or null when unanswered, everything else is text.
+function collectJson() {
+  const { order, values } = collectFields();
+  const shaped = {};
+  for (const name of order) {
+    const element = form.elements[name];
+    const control = element instanceof RadioNodeList ? element[0] : element;
+    const value = values[name];
+    if (Array.isArray(value)) {
+      shaped[name] = value;
+    } else if (control && (control.type === "number" || control.type === "range")) {
+      shaped[name] = value === "" ? null : Number(value);
+    } else {
+      shaped[name] = value;
+    }
+  }
+  return shaped;
 }
 
-function exportFile() {
-  const blob = new Blob([toTSV()], {
-    type: "text/tab-separated-values;charset=utf-8",
-  });
+function download(text, filename, type) {
+  const blob = new Blob([text], { type: `${type};charset=utf-8` });
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
   link.href = url;
-  link.download = exportFilename();
+  link.download = filename;
   document.body.appendChild(link);
   link.click();
   link.remove();
   setTimeout(() => URL.revokeObjectURL(url), 0);
 }
 
+function exportTsv() {
+  download(toTSV(), "export.tsv", "text/tab-separated-values");
+}
+
+function exportJson() {
+  download(JSON.stringify(collectJson(), null, 2), "export.json", "application/json");
+}
+
+const STORAGE_REFUSED =
+  "This browser will not let the page save your answers. Export before you leave.";
+
+function reportStorageRefused(error) {
+  console.warn(STORAGE_REFUSED, error);
+  const status = document.getElementById("storage-status");
+  if (status) status.textContent = STORAGE_REFUSED;
+}
+
 function saveToStorage() {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(collectFields().values));
   } catch (error) {
-    console.warn("Could not save the form in this browser:", error);
+    reportStorageRefused(error);
   }
 }
 
@@ -319,7 +345,7 @@ function restoreFromStorage() {
   try {
     saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
   } catch (error) {
-    console.warn("Could not read the saved form:", error);
+    reportStorageRefused(error);
   }
   if (!saved) return;
   for (const element of form.elements) {
@@ -339,7 +365,7 @@ function clearStorage() {
   try {
     localStorage.removeItem(STORAGE_KEY);
   } catch (error) {
-    console.warn("Could not clear the saved form:", error);
+    reportStorageRefused(error);
   }
 }
 
@@ -383,30 +409,49 @@ function applyQueryParameters() {
   return applied;
 }
 
+// Saved 400 ms after a keystroke or a tick, so a long answer is not written
+// on every character.
 let saveTimer = null;
-form.addEventListener("input", () => {
+function scheduleSave() {
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(saveToStorage, 250);
-});
-form.addEventListener("change", saveToStorage);
-form.addEventListener("reset", () => {
-  clearTimeout(saveTimer);
-  clearStorage();
-});
+  saveTimer = setTimeout(saveToStorage, 400);
+}
+form.addEventListener("input", scheduleSave);
+form.addEventListener("change", scheduleSave);
 
-document.getElementById("export").addEventListener("click", exportFile);
+// Clearing throws away answers and wipes what this browser has kept of them,
+// so it asks first.
+function clearForm() {
+  if (!window.confirm("Clear every answer, and erase the copy saved in this browser?")) return;
+  clearTimeout(saveTimer);
+  form.reset();
+  clearStorage();
+  applyDefaults();
+  const status = document.getElementById("storage-status");
+  if (status) status.textContent = "";
+}
+
+// Buttons are wired by id rather than by a framework, so this page works with
+// nothing hydrating it.
+document.getElementById("export-tsv").addEventListener("click", exportTsv);
+document.getElementById("export-json").addEventListener("click", exportJson);
+document.getElementById("clear").addEventListener("click", clearForm);
+
+// Default to now in UTC, but never overwrite an answer already there.
+function applyDefaults() {
+  const now = new Date();
+  const date = document.getElementById("date");
+  const time = document.getElementById("time");
+  if (!date.value) date.value = utcDate(now);
+  if (!time.value) time.value = utcTime(now);
+}
 
 window.addEventListener("load", () => {
   restoreFromStorage();
   // A link is a deliberate instruction, so its parameters win over whatever
   // the browser had saved from last time.
   const fromQuery = applyQueryParameters();
-  // Default to now in UTC, but never overwrite a restored or supplied answer.
-  const now = new Date();
-  const date = document.getElementById("date");
-  const time = document.getElementById("time");
-  if (!date.value) date.value = utcDate(now);
-  if (!time.value) time.value = utcTime(now);
+  applyDefaults();
   if (fromQuery) saveToStorage();
 });
 </script>
