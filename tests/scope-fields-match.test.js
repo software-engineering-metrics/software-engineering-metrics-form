@@ -15,6 +15,9 @@ import { sections, fields } from '../src/lib/fields.ts';
 const html = readFileSync(new URL('../index.html', import.meta.url), 'utf8');
 const bas = readFileSync(new URL('../index.bas', import.meta.url), 'utf8');
 const schemaSource = readFileSync(new URL('../src/lib/fields.ts', import.meta.url), 'utf8');
+const routeSources = ['+page.svelte', '+layout.svelte', '+layout.ts']
+  .map((name) => readFileSync(new URL(`../src/routes/${name}`, import.meta.url), 'utf8'))
+  .join('\n');
 
 /**
  * @typedef {object} ParsedField
@@ -232,4 +235,25 @@ test('the Excel form can be pasted without editing', () => {
     !/^Attribute VB_Name/m.test(bas),
     'index.bas carries no Attribute directive outside a comment'
   );
+});
+
+// Every question binds to state, the saved copy is written by an effect, and
+// a link is read on mount. Turning hydration off would leave 240 controls
+// that display but record nothing.
+test('the application keeps the hydration its bindings depend on', () => {
+  assert.ok(
+    !/\bcsr\s*=\s*false/.test(routeSources),
+    'no route disables client-side rendering'
+  );
+});
+
+// index.html is the opposite case on purpose, and must stay framework-free.
+test('the short form wires its buttons by id, with no framework', () => {
+  for (const id of ['export-tsv', 'export-json', 'clear']) {
+    assert.ok(
+      html.includes(`getElementById("${id}").addEventListener`),
+      `#${id} is wired by id`
+    );
+  }
+  assert.ok(!/<script[^>]+\bsrc=/.test(html), 'no script is loaded from anywhere else');
 });

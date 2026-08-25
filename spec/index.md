@@ -11,7 +11,9 @@ ones you may not break.
 One topic has its own file:
 [`web-form-local-storage-exports/`](web-form-local-storage-exports/index.md)
 governs the saved copy, the Clear button, and the two exports. Where it and
-this overview disagree, it wins.
+this overview disagree on those, it wins. Its remark about wiring buttons by
+id, with nothing hydrating the page, describes `index.html`. The application
+in `src/` uses hydration: see "Hydration" below.
 
 ## What the form is
 
@@ -180,8 +182,9 @@ nowhere else yet.
 6. **A value the form cannot accept is ignored and reported**, never guessed
    at and never allowed to blank a field.
 7. **`pnpm test` passes** before a change is considered done.
-8. **The buttons are wired by id**, not by a framework, so `index.html` keeps
-   working with nothing hydrating it.
+8. **`index.html` wires its buttons by id**, not through a framework, so it
+   keeps working with nothing hydrating it. The application in `src/` is the
+   other way round and uses hydration.
 
 ## The Excel form
 
@@ -238,6 +241,23 @@ The saved copy, the Clear button, and both exports behave the same way in
 both, to the same 400 ms delay and the same confirm. The application shapes
 its JSON from what it knows a question is, so a tick list is an array and a
 rating is a number, which the short form has no controls for yet.
+
+### Hydration
+
+The application uses [SvelteKit](https://svelte.dev/docs/kit) hydration. It is
+prerendered, so the first paint arrives as HTML, and then the client takes
+over.
+
+That is a requirement, not an accident of the setup. Every question binds to
+state with `bind:value`, the saved copy is written by an effect, and a link is
+read on mount. None of that runs without hydration, so setting `csr = false`
+on this route would leave 240 controls that display but do not record
+anything. If the application ever has to run without hydration, it needs
+rewriting around plain form controls and script wired by id, the way
+`index.html` already is. That is a rewrite, not a flag.
+
+`index.html` is the opposite by design, and needs no framework at all. Between
+them the repository covers both cases, which is worth keeping.
 
 Where the two still differ, on purpose:
 
