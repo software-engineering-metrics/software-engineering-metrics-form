@@ -282,9 +282,9 @@ Where the two still differ, on purpose:
 3. Edit `index.html` to match.
 4. Run `pnpm verify`: the type check, the tests, and the build, in one
    command, so none of the three gets skipped. If the change touches
-   `index.html`, run `pnpm test:browser` as well, which runs the real page. The tests compare
-   `index.html`, `index.bas`, and the schema against each other, and fail on
-   any disagreement. The same run happens on every push, in
+   `index.html`, run `pnpm test:browser` as well, which runs the real page.
+   The tests compare `index.html`, `index.bas`, and the schema against each
+   other, and fail on any disagreement. Both runs happen on every push, in
    `.github/workflows/test.yml`.
 5. Check it in a browser: fill the form, reload to confirm the answers come
    back, export, and open the file.
