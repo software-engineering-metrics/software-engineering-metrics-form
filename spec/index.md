@@ -267,6 +267,10 @@ rewriting around plain form controls and script wired by id, the way
 `index.html` is the opposite by design, and needs no framework at all. Between
 them the repository covers both cases, which is worth keeping.
 
+`pnpm test:browser` checks this by using it rather than by reading the source:
+it types into the built site and looks for the answer in the store, which
+nothing but a hydrated page can do.
+
 Where the two still differ, on purpose:
 
 - The application asks a further 228 questions, which `index.html` does not.
@@ -282,7 +286,7 @@ Where the two still differ, on purpose:
 3. Edit `index.html` to match.
 4. Run `pnpm verify`: the type check, the tests, and the build, in one
    command, so none of the three gets skipped. If the change touches
-   `index.html`, run `pnpm test:browser` as well, which runs the real page.
+   either web form, run `pnpm test:browser` as well, which runs them both.
    The tests compare `index.html`, `index.bas`, and the schema against each
    other, and fail on any disagreement. Both runs happen on every push, in
    `.github/workflows/test.yml`.

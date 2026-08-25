@@ -83,10 +83,10 @@ name, wording, control, offered values, or whether it is required. They also
 cover both exports, pre-filling from a link, and the saved copy's handling of
 a stored answer that is missing, renamed, or the wrong type.
 
-`index.html` carries its whole implementation inline, so none of it can be
-imported and unit tested. `pnpm test:browser` runs the real page in Chromium
-instead, which is also the only honest way to check a download, a confirm
-dialog, and a browser that refuses to store anything.
+`pnpm test:browser` runs both web forms in Chromium: `index.html` served
+from disk, and the long form built and previewed as it ships. Some things can
+only be checked that way, including a download, a confirm dialog, a browser
+whose storage throws, and whether the long form hydrates at all.
 
 `index.bas` cannot be run here, since there is no Excel to run it in, so it is
 checked structurally instead: that every block closes by its own kind, that
