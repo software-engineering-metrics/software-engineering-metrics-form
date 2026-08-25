@@ -64,6 +64,7 @@ pnpm preview   # serve the production build
 pnpm check     # svelte-check
 pnpm test      # node --test
 pnpm verify    # check, test, and build, in one command
+pnpm test:browser  # runs index.html in a real browser
 ```
 
 Node 24 or newer. The tests import `src/lib/*.ts` directly, which needs a Node
@@ -81,6 +82,11 @@ the three forms against each other and fail when they disagree on a question's
 name, wording, control, offered values, or whether it is required. They also
 cover both exports, pre-filling from a link, and the saved copy's handling of
 a stored answer that is missing, renamed, or the wrong type.
+
+`index.html` carries its whole implementation inline, so none of it can be
+imported and unit tested. `pnpm test:browser` runs the real page in Chromium
+instead, which is also the only honest way to check a download, a confirm
+dialog, and a browser that refuses to store anything.
 
 `index.bas` cannot be run here, since there is no Excel to run it in, so it is
 checked structurally instead: that every block closes by its own kind, that

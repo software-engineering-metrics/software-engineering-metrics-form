@@ -281,7 +281,8 @@ Where the two still differ, on purpose:
    naming rule, the query-string rule, the time rule, or the export format.
 3. Edit `index.html` to match.
 4. Run `pnpm verify`: the type check, the tests, and the build, in one
-   command, so none of the three gets skipped. The tests compare
+   command, so none of the three gets skipped. If the change touches
+   `index.html`, run `pnpm test:browser` as well, which runs the real page. The tests compare
    `index.html`, `index.bas`, and the schema against each other, and fail on
    any disagreement. The same run happens on every push, in
    `.github/workflows/test.yml`.
