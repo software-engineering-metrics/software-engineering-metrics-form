@@ -82,7 +82,8 @@ that is missing, renamed, or the wrong type.
   and the rules that may not break. Read this before changing anything.
 - `src/lib/fields.ts` : every question, as data. One list drives the rendered
   form and the export column order together, so the two cannot drift apart.
-- `src/lib/tsv.ts` : the export, and its escaping.
+- `src/lib/tsv.ts` : the tab-separated export, and its escaping.
+- `src/lib/json.ts` : the JSON export, which keeps each answer's shape.
 - `src/lib/storage.ts` : keeping answers in the browser between visits.
 - `src/lib/query.ts` : pre-filling from a link.
 - `src/lib/components/` : Lily components, copied in. Lily is consumed by

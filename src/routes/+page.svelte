@@ -19,17 +19,21 @@
   import CheckboxInput from '$lib/components/CheckboxInput/CheckboxInput.svelte';
   import Button from '$lib/components/Button/Button.svelte';
   import SubmitInput from '$lib/components/SubmitInput/SubmitInput.svelte';
-  import ResetInput from '$lib/components/ResetInput/ResetInput.svelte';
   import Header from '$lib/components/Header/Header.svelte';
   import Footer from '$lib/components/Footer/Footer.svelte';
 
   import { sections, emptyState, type FieldSpec } from '$lib/fields';
   import { toTSV, exportFilename } from '$lib/tsv';
-  import { applyQuery } from '$lib/query';
+  import { toJsonText } from '$lib/json.ts';
+  import { applyQuery } from '$lib/query.ts';
   import * as storage from '$lib/storage';
 
   let answers = $state(emptyState());
   let restored = $state(false);
+  let storageRefused = $state(false);
+  // Clearing empties the answers, which would otherwise schedule a save that
+  // writes the blank form straight back into the store it just erased.
+  let skipNextSave = false;
 
   // The date and time are always UTC, never the browser's local timezone, so
   // that two submissions from two offices are directly comparable.
@@ -63,11 +67,20 @@
     restored = true;
   });
 
-  // Save on every keystroke, but only once the saved copy has been read in:
-  // writing before then would persist the blank form over real answers.
+  // Saved 400 ms after a keystroke or a tick, and only once the saved copy has
+  // been read in: writing before then would persist the blank form over real
+  // answers. Each change cancels the save the one before it scheduled.
   $effect(() => {
     const snapshot = $state.snapshot(answers);
-    if (restored) storage.save(snapshot);
+    if (!restored) return;
+    if (skipNextSave) {
+      skipNextSave = false;
+      return;
+    }
+    const timer = setTimeout(() => {
+      if (!storage.save(snapshot)) storageRefused = true;
+    }, 400);
+    return () => clearTimeout(timer);
   });
 
   function toggle(name: string, value: string, on: boolean) {
@@ -75,31 +88,50 @@
     answers.checked[name] = on ? [...current, value] : current.filter((item) => item !== value);
   }
 
-  function handleExport() {
-    const snapshot = $state.snapshot(answers);
-    const blob = new Blob([toTSV(snapshot)], {
-      type: 'text/tab-separated-values;charset=utf-8'
-    });
+  function download(text: string, filename: string, type: string) {
+    const blob = new Blob([text], { type: `${type};charset=utf-8` });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = exportFilename(snapshot);
+    link.download = filename;
     document.body.appendChild(link);
     link.click();
     link.remove();
     setTimeout(() => URL.revokeObjectURL(url), 0);
   }
 
-  function handleReset(event: Event) {
-    // Bound inputs are driven by state, so let the state be the only thing
-    // that clears them: a native reset would restore stale DOM values behind
-    // Svelte's back.
-    event.preventDefault();
+  function handleExport() {
+    const snapshot = $state.snapshot(answers);
+    download(toTSV(snapshot), exportFilename(snapshot), 'text/tab-separated-values');
+  }
+
+  function handleExportJson() {
+    const snapshot = $state.snapshot(answers);
+    download(
+      toJsonText(snapshot),
+      exportFilename(snapshot).replace(/\.tsv$/, '.json'),
+      'application/json'
+    );
+  }
+
+  // Clearing throws away answers that exist nowhere else yet, and wipes what
+  // this browser has kept of them, so it asks first.
+  function handleClear() {
+    if (!window.confirm('Clear every answer, and erase the copy saved in this browser?')) return;
+    skipNextSave = true;
     answers = emptyState();
     const now = new Date();
     answers.values.date = utcDate(now);
     answers.values.time = utcTime(now);
     storage.clear();
+    storageRefused = false;
+  }
+
+  function handleReset(event: Event) {
+    // Bound inputs are driven by state, so a native reset would restore stale
+    // DOM values behind Svelte's back. The confirm decides what happens.
+    event.preventDefault();
+    handleClear();
   }
 
   function handleSubmit() {
@@ -279,14 +311,19 @@
     <div class="form-actions">
       <SubmitInput value="Submit metrics" />
       <Button type="button" onclick={handleExport}>Export TSV</Button>
-      <ResetInput value="Clear the form" />
+      <Button type="button" onclick={handleExportJson}>Export JSON</Button>
+      <Button type="button" onclick={handleClear}>Clear</Button>
     </div>
   </Form>
 
-  <p class="hint">
-    Answers are kept in this browser only, and restored if you close the page
-    and come back. Clearing the form also clears the saved answers.
-  </p>
+  {#if storageRefused}
+    <p class="hint" role="status">{storage.STORAGE_REFUSED}</p>
+  {:else}
+    <p class="hint">
+      Answers are kept in this browser only, and restored if you close the page
+      and come back. Clearing the form also clears the saved answers.
+    </p>
+  {/if}
 </main>
 
 <Footer label="Site footer">

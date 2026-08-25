@@ -7,11 +7,17 @@ import { emptyState, type FormState } from './fields.ts';
 
 export const STORAGE_KEY = 'software-engineering-metrics-form';
 
-export function save(state: FormState): void {
+export const STORAGE_REFUSED =
+  'This browser will not let the page save your answers. Export before you leave.';
+
+/** True when the answers were stored. False means the browser refused. */
+export function save(state: FormState): boolean {
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    return true;
   } catch (error) {
-    console.warn('Could not save the form in this browser:', error);
+    console.warn(STORAGE_REFUSED, error);
+    return false;
   }
 }
 
@@ -43,15 +49,17 @@ export function load(): FormState {
     }
     return state;
   } catch (error) {
-    console.warn('Could not read the saved form:', error);
+    console.warn(STORAGE_REFUSED, error);
     return emptyState();
   }
 }
 
-export function clear(): void {
+export function clear(): boolean {
   try {
     localStorage.removeItem(STORAGE_KEY);
+    return true;
   } catch (error) {
-    console.warn('Could not clear the saved form:', error);
+    console.warn(STORAGE_REFUSED, error);
+    return false;
   }
 }

@@ -145,3 +145,13 @@ test('a browser that refuses to store anything does not break the form', () => {
   assert.doesNotThrow(() => storage.clear());
   assert.deepEqual(storage.load(), emptyState(), 'a blank form, not an exception');
 });
+
+test('a refusal is reported, so the page can say so rather than fail silently', () => {
+  globalThis.localStorage = refusingStorage();
+  assert.equal(storage.save(emptyState()), false);
+  assert.equal(storage.clear(), false);
+
+  globalThis.localStorage = stubStorage();
+  assert.equal(storage.save(emptyState()), true);
+  assert.equal(storage.clear(), true);
+});

@@ -234,9 +234,16 @@ a question either form asks fills it in either form. The application extends it
 to all 240 questions, and says a checklist's several answers by repeating the
 parameter: `?ai_usage=agentic&ai_usage=test_generation`.
 
+The saved copy, the Clear button, and both exports behave the same way in
+both, to the same 400 ms delay and the same confirm. The application shapes
+its JSON from what it knows a question is, so a tick list is an array and a
+rating is a number, which the short form has no controls for yet.
+
 Where the two still differ, on purpose:
 
 - The application asks a further 228 questions, which `index.html` does not.
+- The application names its downloads for the plan and the task; the short
+  form uses the fixed `export.tsv` and `export.json`.
 
 ## The usual workflow
 
