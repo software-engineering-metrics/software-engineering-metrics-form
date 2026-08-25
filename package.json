@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "packageManager": "pnpm@11.0.8",
-  "description": "Software Engineering Metrics \u2014 capture form (SvelteKit + Lily Design System)",
+  "description": "Software Engineering Metrics — capture form (SvelteKit + Lily Design System)",
   "scripts": {
     "dev": "vite dev",
     "build": "vite build",
@@ -17,6 +17,7 @@
     "@sveltejs/adapter-static": "^3.0.10",
     "@sveltejs/kit": "^2.70.2",
     "@sveltejs/vite-plugin-svelte": "^5.1.1",
+    "@types/node": "^24.13.3",
     "svelte": "^5.56.9",
     "svelte-check": "^4.7.6",
     "typescript": "^5.9.3",

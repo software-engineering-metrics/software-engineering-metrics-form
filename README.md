@@ -67,7 +67,9 @@ pnpm verify    # check, test, and build, in one command
 ```
 
 Node 24 or newer. The tests import `src/lib/*.ts` directly, which needs a Node
-that strips types without a flag.
+that strips types without a flag, and they import `node:fs` and `node:test`,
+so `@types/node` is a declared dependency rather than something the machine
+happens to have lying around.
 [`.github/workflows/test.yml`](.github/workflows/test.yml) runs the check, the
 tests, and the build on every push.
 
